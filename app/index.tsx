@@ -13,7 +13,7 @@ import { Link } from 'expo-router';
 
 export default function HomeScreen() {
 
-  const [taskText, setTaskText] = useState(''); // 👈 Local state for the input
+  const [taskText, setTaskText] = useState('');
 
   const handleAddTask = () => {
     // 1. Validate input is not empty
@@ -21,18 +21,13 @@ export default function HomeScreen() {
       alert("Task cannot be empty!");
       return;
     }
-    
-    // 2. Here you will eventually dispatch an action to Zustand 
-    //    or call your json-server POST endpoint with taskText.
-
     console.log("Adding task:", taskText);
-    
-    // 3. Clear input after adding
+
     setTaskText('');
   };
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#FDFA3D', dark: '#FDFA3D' }}
       headerImage={
         <Image
           source={require('@/assets/images/cashea_logo.jpg')}
@@ -45,22 +40,18 @@ export default function HomeScreen() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <Link href="/modal">
-          {/* <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger> */}
-          <ThemedView>
-
-          <ThemedInput
-            placeholder="What needs to be done?"
-            value={taskText}
-            onChangeText={setTaskText} // Update local state on change
-            style={styles.inputField}
+          <ThemedView style={styles.inputContainer}>
+            <ThemedInput
+              placeholder="Add tasks here"
+              value={taskText}
+              onChangeText={setTaskText}
+              style={styles.inputField}
             />
-        <ThemedButton 
-          title="Add" 
-          onPress={handleAddTask} 
-          variant="primary"
-          />
+            <ThemedButton
+              title="Add"
+              onPress={handleAddTask}
+              variant="primary"
+            />
           </ThemedView>
         </Link>
       </ThemedView>
@@ -79,7 +70,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   casheaLogo: {
-    height: '100%',
+    height: '80%',
     width: '100%',
     bottom: 0,
     left: 0,
@@ -91,11 +82,9 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth, // Visual separator
-    // Assuming you have a themed border color
-    // borderBottomColor: useThemeColor({}, 'separator'),
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   inputField: {
-    flex: 1, // Allows input to take up most of the space
+    flex: 1,
   },
 });

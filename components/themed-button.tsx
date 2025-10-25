@@ -7,18 +7,18 @@ export type ThemedButtonProps = PressableProps & {
   variant?: 'primary' | 'delete' | 'filter' | 'priority'; // New styling variants
   lightColor?: string;
   darkColor?: string;
-  style?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>
 };
 
-export function ThemedButton({ 
-  title, 
-  variant = 'primary', 
-  style, 
-  lightColor, 
-  darkColor, 
-  ...otherProps 
+export function ThemedButton({
+  title,
+  variant = 'primary',
+  style,
+  lightColor,
+  darkColor,
+  ...otherProps
 }: ThemedButtonProps) {
-  
+
   // Determine background color based on variant or custom color
   const primaryBg = useThemeColor({ light: lightColor, dark: darkColor }, 'tint'); // Default to 'tint' (a primary color)
   const deleteBg = useThemeColor({}, 'tint'); // Use 'error' for delete actions
@@ -31,7 +31,7 @@ export function ThemedButton({
   };
 
   // Determine text color
-  const textColor = variant === 'filter' || variant === 'priority' 
+  const textColor = variant === 'filter' || variant === 'priority'
     ? useThemeColor({}, 'text') // Dark text for light filter background
     : useThemeColor({}, 'background'); // Light text for dark/primary backgrounds
 
@@ -39,8 +39,8 @@ export function ThemedButton({
     <Pressable
       style={({ pressed }) => [
         styles.base,
-        { 
-          backgroundColor: getBackgroundColor(), 
+        {
+          backgroundColor: getBackgroundColor(),
           opacity: pressed ? 0.7 : 1, // Visual feedback on press 
         },
         style,
