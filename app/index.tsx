@@ -1,78 +1,68 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { ThemedButton } from '@/components/themed-button';
 import { ThemedText } from '@/components/themed-text';
+import { ThemedInput } from '@/components/themed-textInput';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
 
+
 export default function HomeScreen() {
+
+  const [taskText, setTaskText] = useState(''); // 👈 Local state for the input
+
+  const handleAddTask = () => {
+    // 1. Validate input is not empty
+    if (!taskText.trim()) {
+      alert("Task cannot be empty!");
+      return;
+    }
+    
+    // 2. Here you will eventually dispatch an action to Zustand 
+    //    or call your json-server POST endpoint with taskText.
+
+    console.log("Adding task:", taskText);
+    
+    // 3. Clear input after adding
+    setTaskText('');
+  };
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('@/assets/images/cashea_logo.jpg')}
+          style={styles.casheaLogo}
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
+        <ThemedText type="middle">Welcome to Cashea's coding challenge!</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <Link href="/modal">
-          <Link.Trigger>
+          {/* <Link.Trigger>
             <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+          </Link.Trigger> */}
+          <ThemedView>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+          <ThemedInput
+            placeholder="What needs to be done?"
+            value={taskText}
+            onChangeText={setTaskText} // Update local state on change
+            style={styles.inputField}
+            />
+        <ThemedButton 
+          title="Add" 
+          onPress={handleAddTask} 
+          variant="primary"
+          />
+          </ThemedView>
+        </Link>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -88,11 +78,24 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
+  casheaLogo: {
+    height: '100%',
+    width: '100%',
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth, // Visual separator
+    // Assuming you have a themed border color
+    // borderBottomColor: useThemeColor({}, 'separator'),
+  },
+  inputField: {
+    flex: 1, // Allows input to take up most of the space
   },
 });
