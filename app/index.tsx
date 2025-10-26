@@ -1,45 +1,77 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedButton } from '@/components/themed-button';
+import { ThemedList } from '@/components/themed-list';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedInput } from '@/components/themed-textInput';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { TodoTask } from '@/constants/types';
+import { getRandomPriority } from '@/helpers/helpers';
+import { useTodoStore } from '@/stores/todoStore';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 
 export default function HomeScreen() {
-
+  // Local state for input text remains (should be local)
   const [taskText, setTaskText] = useState('');
 
+  // 🚨 Use the Zustand store selectors instead of useState
+  const tasks = useTodoStore(state => state.tasks);
+  const addTask = useTodoStore(state => state.addTask);
+  const toggleTask = useTodoStore(state => state.toggleTask);
+  const deleteTask = useTodoStore(state => state.deleteTask);
+  const isHydrated = useTodoStore(state => state.isHydrated); // Loading state
+
+  // No need for separate local handlers, we use the store actions directly
+
   const handleAddTask = () => {
-    // 1. Validate input is not empty
     if (!taskText.trim()) {
       alert("Task cannot be empty!");
       return;
     }
-    console.log("Adding task:", taskText);
 
+    const newTask: TodoTask = {
+      id: Date.now().toString(),
+      text: taskText.trim(),
+      isCompleted: false,
+      priority: getRandomPriority(), // Use the helper
+    };
+
+    // 🚨 Use the Zustand action to add the task
+    addTask(newTask);
     setTaskText('');
   };
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#FDFA3D', dark: '#FDFA3D' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/cashea_logo.jpg')}
-          style={styles.casheaLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <HelloWave />
-        <ThemedText type="middle">Welcome to Cashea's coding challenge!</ThemedText>
+
+  // 🚨 Hydration Check: Show a loading indicator until data is ready
+  if (!isHydrated) {
+    return (
+      <ThemedView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+        <ThemedText>Loading tasks...</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
+    );
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: '#FDFA3D', dark: '#FDFA3D' }}
+        headerImage={
+          <Image
+            source={require('@/assets/images/cashea_logo.jpg')}
+            style={styles.casheaLogo}
+          />
+        }>
+        <ThemedView style={styles.titleContainer}>
+          <HelloWave />
+          <ThemedText type="middle">Welcome to Cashea's coding challenge!</ThemedText>
+        </ThemedView>
+        <ThemedView style={styles.stepContainer}>
           <ThemedView style={styles.inputContainer}>
             <ThemedInput
               placeholder="Add tasks here"
@@ -53,9 +85,15 @@ export default function HomeScreen() {
               variant="primary"
             />
           </ThemedView>
-        </Link>
-      </ThemedView>
-    </ParallaxScrollView>
+          {/* 🚨 Pass Zustand actions and state */}
+          <ThemedList
+            tasks={tasks}
+            onToggleTask={toggleTask} // Directly pass the store action
+            onDeleteTask={deleteTask} // Directly pass the store action
+          />
+        </ThemedView>
+      </ParallaxScrollView>
+    </GestureHandlerRootView>
   );
 }
 
@@ -86,5 +124,10 @@ const styles = StyleSheet.create({
   },
   inputField: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

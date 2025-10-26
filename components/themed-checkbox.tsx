@@ -1,30 +1,28 @@
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo for icons
-import { Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle, type PressableProps } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, StyleProp, StyleSheet, View, ViewStyle, type PressableProps } from 'react-native';
 
 export type ThemedCheckboxProps = PressableProps & {
   checked: boolean;
-  onToggle: () => void;
+  onToggle: (e: any) => void;
   lightColor?: string;
   darkColor?: string;
   style?: StyleProp<ViewStyle>;
 };
 
-export function ThemedCheckbox({ 
-  checked, 
-  onToggle, 
-  style, 
-  lightColor, 
-  darkColor, 
-  ...otherProps 
+export function ThemedCheckbox({
+  checked,
+  onToggle,
+  style,
+  lightColor,
+  darkColor,
+  ...otherProps
 }: ThemedCheckboxProps) {
-  
-  // Theme colors
+
   const borderColor = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-  const checkedColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint'); // Primary color when checked
-  const uncheckedBgColor = useThemeColor({}, 'background'); // Usually white/light gray when unchecked
-  
-  // Use the primary/tint color for the icon when checked
+  const checkedColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+  const uncheckedBgColor = useThemeColor({}, 'background');
+
   const iconColor = checked ? checkedColor : uncheckedBgColor;
 
   return (
@@ -35,21 +33,20 @@ export function ThemedCheckbox({
       accessibilityState={{ checked }}
       {...otherProps}
     >
-      <View 
+      <View
         style={[
-          styles.box, 
-          { 
+          styles.box,
+          {
             borderColor: borderColor,
             backgroundColor: iconColor,
           }
         ]}
       >
-        {/* Use Ionicons checkmark icon */}
         {checked && (
-          <Ionicons 
-            name={Platform.OS === 'ios' ? 'checkmark' : 'checkmark'} 
-            size={20} 
-            color={useThemeColor({}, 'background')} // The icon itself should be the inverse (white/light)
+          <Ionicons
+            name={'checkmark'}
+            size={20}
+            color={'white'}
           />
         )}
       </View>
@@ -59,7 +56,7 @@ export function ThemedCheckbox({
 
 const styles = StyleSheet.create({
   base: {
-    padding: 5, // Tappable area
+    padding: 5,
   },
   box: {
     width: 24,
