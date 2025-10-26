@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedButton } from '@/components/themed-button';
 import { ThemedList } from '@/components/themed-list';
 import { ThemedText } from '@/components/themed-text';
@@ -13,6 +12,7 @@ import { TodoTask } from '@/constants/types';
 import { getRandomPriority } from '@/helpers/helpers';
 import { useTodoStore } from '@/stores/todoStore';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import HeaderView from '../components/header-view';
 
 
 
@@ -59,40 +59,41 @@ export default function HomeScreen() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ParallaxScrollView
+      <HeaderView
         headerBackgroundColor={{ light: '#FDFA3D', dark: '#FDFA3D' }}
         headerImage={
           <Image
             source={require('@/assets/images/cashea_logo.jpg')}
             style={styles.casheaLogo}
           />
-        }>
-        <ThemedView style={styles.titleContainer}>
-          <HelloWave />
-          <ThemedText type="middle">Welcome to Cashea's coding challenge!</ThemedText>
+        } />
+      <ThemedView style={styles.titleContainer}>
+        <HelloWave />
+        <ThemedView style={{ flexDirection: 'column', alignItems: 'center' }}>
+          <ThemedText type="middle">Welcome to Cashea's </ThemedText>
+          <ThemedText type="middle">coding challenge! </ThemedText>
         </ThemedView>
-        <ThemedView style={styles.stepContainer}>
-          <ThemedView style={styles.inputContainer}>
-            <ThemedInput
-              placeholder="Add tasks here"
-              value={taskText}
-              onChangeText={setTaskText}
-              style={styles.inputField}
-            />
-            <ThemedButton
-              title="Add"
-              onPress={handleAddTask}
-              variant="primary"
-            />
-          </ThemedView>
-          {/* 🚨 Pass Zustand actions and state */}
-          <ThemedList
-            tasks={tasks}
-            onToggleTask={toggleTask} // Directly pass the store action
-            onDeleteTask={deleteTask} // Directly pass the store action
+      </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+        <ThemedView style={styles.inputContainer}>
+          <ThemedInput
+            placeholder="Add tasks here"
+            value={taskText}
+            onChangeText={setTaskText}
+            style={styles.inputField}
+          />
+          <ThemedButton
+            title="Add"
+            onPress={handleAddTask}
+            variant="primary"
           />
         </ThemedView>
-      </ParallaxScrollView>
+        <ThemedList
+          tasks={tasks}
+          onToggleTask={toggleTask}
+          onDeleteTask={deleteTask}
+        />
+      </ThemedView>
     </GestureHandlerRootView>
   );
 }
@@ -102,8 +103,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    justifyContent: 'center',
+    paddingTop: 10,
+    paddingBottom: 4,
   },
   stepContainer: {
+    backgroundColor: 'white',
+    flex: 1,
     gap: 8,
     marginBottom: 8,
   },

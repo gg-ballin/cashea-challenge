@@ -33,7 +33,7 @@ export function ThemedList({ tasks, onToggleTask, onDeleteTask }: ThemedListProp
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingBottom: 15,
+    paddingBottom: 5,
   },
   separator: {
     height: 1,
