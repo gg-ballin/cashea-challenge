@@ -1,6 +1,9 @@
 export type Priority = "High" | "Medium" | "Low";
 export type TaskStatusFilter = "All" | "Completed" | "Pending";
 export type PriorityFilter = "All" | Priority;
+export type SortDirection = "asc" | "desc";
+export type SortBy = "priority" | "text" | "createdAt";
+
 export interface TodoTask {
   id: string;
   text: string;
@@ -12,3 +15,21 @@ export type PriorityStyle = {
   backgroundColor: string;
   color: string;
 };
+
+export interface TodoState {
+  tasks: TodoTask[];
+  isHydrated: boolean;
+  sortBy: SortBy;
+  sortDirection: SortDirection;
+  statusFilter: TaskStatusFilter;
+  priorityFilter: PriorityFilter;
+  // Actions
+  setHydrated: (hydrated: boolean) => void;
+  addTask: (task: TodoTask) => void;
+  toggleTask: (id: string) => void;
+  deleteTask: (id: string) => void;
+  editTask: (id: string, updates: Partial<Omit<TodoTask, "id">>) => void;
+  setStatusFilter: (status: TaskStatusFilter) => void;
+  setPriorityFilter: (priority: PriorityFilter) => void;
+  setSortBy: (by: SortBy, direction: SortDirection) => void;
+}

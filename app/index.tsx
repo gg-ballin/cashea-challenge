@@ -7,10 +7,12 @@ import { ThemedView } from '@/components/base/themed-view';
 import HeaderView from '@/components/containers/header-view';
 import { ThemedList } from '@/components/lists/themed-list';
 import { HelloWave } from '@/components/ui/hello-wave';
+import { PriorityFilterButtons } from '@/components/ui/priority-filter-buttons';
+import { StatusFilterButtons } from '@/components/ui/status-filter-buttons';
 import { ThemedButton } from '@/components/ui/themed-button';
 import { ThemedFAB } from '@/components/ui/themed-fab';
 import { ThemedInput } from '@/components/ui/themed-textInput';
-import { TodoTask } from '@/constants/types';
+import { Priority, TodoTask } from '@/constants/types';
 import { getRandomPriority } from '@/helpers/helpers';
 import { useTodoStore } from '@/stores/todoStore';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -44,19 +46,40 @@ export default function HomeScreen() {
     setTaskText('');
   };
 
-  const filteredTasks = useMemo(() => {
-    return allTasks.filter(task => {
+  const filteredAndSortedTasks = useMemo(() => {
+    let tasks = allTasks.filter(task => {
+      // Filter by Status
       const statusMatch =
         statusFilter === 'All' ||
         (statusFilter === 'Completed' && task.isCompleted) ||
         (statusFilter === 'Pending' && !task.isCompleted);
+
+      // Filter by Priority
       const priorityMatch =
         priorityFilter === 'All' ||
         task.priority === priorityFilter;
 
+      // Filters should work together (AND logic)
       return statusMatch && priorityMatch;
     });
-  }, [allTasks, statusFilter, priorityFilter]);
+
+    // --- Ordering Logic (Highest Priority/Pending first) ---
+    const priorityOrder: Record<Priority, number> = { 'High': 3, 'Medium': 2, 'Low': 1 };
+
+    tasks.sort((a, b) => {
+      // Incomplete tasks always come before completed tasks
+      if (a.isCompleted !== b.isCompleted) {
+        return a.isCompleted ? 1 : -1;
+      }
+      // Sort by priority level (Descending)
+      const priorityA = priorityOrder[a.priority] || 0;
+      const priorityB = priorityOrder[b.priority] || 0;
+      return priorityB - priorityA;
+    });
+
+    return tasks;
+  }, [allTasks, statusFilter, priorityFilter /*, sort state */]);
+
   if (!isHydrated) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -68,22 +91,16 @@ export default function HomeScreen() {
   const filterButtons = () => {
     return (
       <>
-        <ThemedView style={styles.filterBar}>
-          <ThemedButton
-            title="All"
-            onPress={() => setStatusFilter('All')}
-            variant={statusFilter === 'All' ? 'tertiary' : 'filter'}
-          />
-          <ThemedButton
-            title="Completed"
-            onPress={() => setStatusFilter('Completed')}
-            variant={statusFilter === 'Completed' ? 'tertiary' : 'filter'}
-          />
-          <ThemedButton
-            title="Pending"
-            onPress={() => setStatusFilter('Pending')}
-            variant={statusFilter === 'Pending' ? 'tertiary' : 'filter'}
-          />
+        <ThemedView style={styles.fullFilterContainer}>
+          <ThemedView style={styles.statusFilters}>
+            <StatusFilterButtons />
+          </ThemedView>
+
+          <ThemedView style={styles.priorityFilters}>
+            <ThemedText type="default">Filter by Priority:</ThemedText>
+            <PriorityFilterButtons />
+          </ThemedView>
+
         </ThemedView>
       </>
     )
@@ -125,7 +142,7 @@ export default function HomeScreen() {
             />
           </ThemedView>
           {filterButtons()}
-          <ThemedList tasks={filteredTasks} />
+          <ThemedList tasks={filteredAndSortedTasks} />
         </ThemedView>
       </ThemedView>
       <ThemedFAB />
@@ -177,5 +194,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     justifyContent: 'space-around',
-  }
+  },
+  fullFilterContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 5,
+    gap: 10,
+    // Optional: Add a themed borderBottom if desired
+  },
+  statusFilters: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  priorityFilters: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
 });

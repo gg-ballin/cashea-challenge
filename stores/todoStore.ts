@@ -1,22 +1,9 @@
-import { PriorityFilter, TaskStatusFilter, TodoTask } from "@/constants/types";
+import { TodoState } from "@/constants/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { PersistStorage, persist } from "zustand/middleware";
 
 type StorageValue<T> = { state: T };
-interface TodoState {
-  tasks: TodoTask[];
-  isHydrated: boolean;
-  setHydrated: (hydrated: boolean) => void;
-  addTask: (task: TodoTask) => void;
-  toggleTask: (id: string) => void;
-  deleteTask: (id: string) => void;
-  statusFilter: TaskStatusFilter;
-  priorityFilter: PriorityFilter;
-  editTask: (id: string, updates: Partial<Omit<TodoTask, "id">>) => void;
-  setStatusFilter: (status: TaskStatusFilter) => void;
-  setPriorityFilter: (priority: PriorityFilter) => void;
-}
 
 const customStorage: PersistStorage<TodoState> = {
   getItem: async (name: string): Promise<StorageValue<TodoState> | null> => {
@@ -53,8 +40,10 @@ export const useTodoStore = create<TodoState>()(
     (set) => ({
       tasks: [],
       isHydrated: false,
-      statusFilter: "All",
-      priorityFilter: "All",
+      statusFilter: "All", // 🚨 Default Filter
+      priorityFilter: "All", // 🚨 Default Filter
+      sortBy: "createdAt", // 🚨 Default Sort by date
+      sortDirection: "desc", // 🚨 Default Sort Desc
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
 
       addTask: (task) =>
@@ -73,6 +62,7 @@ export const useTodoStore = create<TodoState>()(
         set((state) => ({
           tasks: state.tasks.filter((task) => task.id !== id),
         })),
+
       editTask: (id, updates) =>
         set((state) => ({
           tasks: state.tasks.map((task) =>
@@ -81,15 +71,25 @@ export const useTodoStore = create<TodoState>()(
         })),
       setStatusFilter: (status) => set({ statusFilter: status }),
       setPriorityFilter: (priority) => set({ priorityFilter: priority }),
+      setSortBy: (by, direction) =>
+        set({ sortBy: by, sortDirection: direction }),
     }),
     {
       name: "todo-storage",
-      storage: customStorage,
+      storage: customStorage as
+        | PersistStorage<TodoState>
+        | PersistStorage<TodoState>
+        | any,
       onRehydrateStorage: () => (state) => {
         if (state) {
           state.setHydrated(true);
         }
       },
+      partialize: (state) => ({
+        tasks: state.tasks,
+        statusFilter: state.statusFilter,
+        priorityFilter: state.priorityFilter,
+      }),
     }
   )
 );
