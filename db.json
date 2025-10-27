@@ -35,6 +35,26 @@
       "text": "ios task!",
       "isCompleted": false,
       "priority": "Medium"
+    },
+    {
+      "id": "e77e",
+      "text": "new task",
+      "isCompleted": false,
+      "priority": "High"
+    },
+    {
+      "id": "df17",
+      "text": "task for platform",
+      "isCompleted": false,
+      "priority": "Medium",
+      "platform": "ios"
+    },
+    {
+      "id": "ee59",
+      "text": "TASK FOR ANDROID?",
+      "isCompleted": false,
+      "priority": "Low",
+      "platform": "android"
     }
   ]
 }

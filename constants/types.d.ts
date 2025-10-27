@@ -3,12 +3,13 @@ export type TaskStatusFilter = "All" | "Completed" | "Pending";
 export type PriorityFilter = "All" | Priority;
 export type SortDirection = "asc" | "desc";
 export type SortBy = "priority" | "text" | "createdAt";
-
+export type Platform = "ios" | "android";
 export interface TodoTask {
   id?: string;
   text: string;
   isCompleted: boolean;
   priority: Priority;
+  platform: Platform;
 }
 
 export type PriorityStyle = {

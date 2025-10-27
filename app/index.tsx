@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
@@ -37,6 +37,7 @@ export default function HomeScreen() {
       text: taskText.trim(),
       isCompleted: false,
       priority: getRandomPriority(),
+      platform: Platform.OS as 'ios' | 'android',
     };
 
     addTask(newTask);
