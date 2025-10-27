@@ -1,5 +1,3 @@
-// components/themed-input.tsx
-
 import { useThemeColor } from '@/hooks/use-theme-color';
 import React from 'react';
 import { Dimensions, StyleSheet, TextInput, type TextInputProps } from 'react-native';

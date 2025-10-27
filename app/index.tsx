@@ -22,8 +22,8 @@ export default function HomeScreen() {
   const allTasks = useTodoStore(state => state.tasks);
   const statusFilter = useTodoStore(state => state.statusFilter);
   const priorityFilter = useTodoStore(state => state.priorityFilter);
-  const setStatusFilter = useTodoStore(state => state.setStatusFilter); // Use this for filter buttons
-  const setPriorityFilter = useTodoStore(state => state.setPriorityFilter); // Use this for priority picker
+  const setStatusFilter = useTodoStore(state => state.setStatusFilter);
+  const setPriorityFilter = useTodoStore(state => state.setPriorityFilter);
   const addTask = useTodoStore(state => state.addTask);
   const isHydrated = useTodoStore(state => state.isHydrated);
 
@@ -46,18 +46,14 @@ export default function HomeScreen() {
 
   const filteredTasks = useMemo(() => {
     return allTasks.filter(task => {
-      // --- Filter by Status ---
       const statusMatch =
         statusFilter === 'All' ||
         (statusFilter === 'Completed' && task.isCompleted) ||
         (statusFilter === 'Pending' && !task.isCompleted);
-
-      // --- Filter by Priority ---
       const priorityMatch =
         priorityFilter === 'All' ||
         task.priority === priorityFilter;
 
-      // 3. Filters should work together (AND logic)
       return statusMatch && priorityMatch;
     });
   }, [allTasks, statusFilter, priorityFilter]);
@@ -132,7 +128,6 @@ export default function HomeScreen() {
           <ThemedList tasks={filteredTasks} />
         </ThemedView>
       </ThemedView>
-
       <ThemedFAB />
     </GestureHandlerRootView>
   );

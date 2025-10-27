@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Pressable, StyleProp, StyleSheet, Text, ViewStyle, type PressableProps } from 'react-native';
 
@@ -18,13 +19,13 @@ export function ThemedButton({
   ...otherProps
 }: ThemedButtonProps) {
 
-  // Background Colors
   const primaryColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
   const deleteColor = useThemeColor({}, 'error');
   const tertiaryColor = useThemeColor({}, 'tertiary');
   const filterPriorityBg = useThemeColor({}, 'secondaryBackground');
   const transparentBg = useThemeColor({}, 'transparent');
-
+  const trueBlackColor = Colors.light.text;
+  const currentThemeTextColor = useThemeColor({}, 'text');
   const darkTextColor = useThemeColor({}, 'text');
   const lightTextColor = useThemeColor({}, 'background');
 
@@ -47,9 +48,19 @@ export function ThemedButton({
     }
   };
 
-  const isLightBackground = variant === 'filter' || variant === 'priority' || variant === 'transparent' || variant === 'tertiary';
+  const isOpticallyLightBackground =
+    variant === 'filter' ||
+    variant === 'priority' ||
+    variant === 'transparent' ||
+    variant === 'tertiary';
 
-  const textColor = isLightBackground ? darkTextColor : lightTextColor;
+  let textColor;
+
+  if (isOpticallyLightBackground) {
+    textColor = trueBlackColor;
+  } else {
+    textColor = lightTextColor;
+  }
 
   return (
     <Pressable
@@ -57,6 +68,7 @@ export function ThemedButton({
         styles.base,
         {
           backgroundColor: getBackgroundColor(),
+          borderColor: isOpticallyLightBackground ? currentThemeTextColor : lightTextColor,
           opacity: pressed ? 0.7 : 1,
         },
         style,
