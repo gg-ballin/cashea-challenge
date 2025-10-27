@@ -1,0 +1,10 @@
+{
+  "tasks": [
+    {
+      "id": "4aaa",
+      "text": "new task in DB!",
+      "isCompleted": false,
+      "priority": "Low"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ export type SortDirection = "asc" | "desc";
 export type SortBy = "priority" | "text" | "createdAt";
 
 export interface TodoTask {
-  id: string;
+  id?: string;
   text: string;
   isCompleted: boolean;
   priority: Priority;
@@ -25,7 +25,7 @@ export interface TodoState {
   priorityFilter: PriorityFilter;
   // Actions
   setHydrated: (hydrated: boolean) => void;
-  addTask: (task: TodoTask) => void;
+  addTask: (task: Omit<TodoTask, "id">) => Promise<void>;
   toggleTask: (id: string) => void;
   deleteTask: (id: string) => void;
   editTask: (id: string, updates: Partial<Omit<TodoTask, "id">>) => void;

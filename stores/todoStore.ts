@@ -1,8 +1,9 @@
-import { TodoState } from "@/constants/types";
+import { TodoState, TodoTask } from "@/constants/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { PersistStorage, persist } from "zustand/middleware";
 
+const BASE_URL = "http://localhost:3000/tasks";
 type StorageValue<T> = { state: T };
 
 const customStorage: PersistStorage<TodoState> = {
@@ -45,11 +46,29 @@ export const useTodoStore = create<TodoState>()(
       sortBy: "createdAt", // 🚨 Default Sort by date
       sortDirection: "desc", // 🚨 Default Sort Desc
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
+      addTask: async (taskDataWithoutId) => {
+        try {
+          const response = await fetch(BASE_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(taskDataWithoutId),
+          });
 
-      addTask: (task) =>
-        set((state) => ({
-          tasks: [task, ...state.tasks],
-        })),
+          if (!response.ok) {
+            throw new Error("Failed to add task to API.");
+          }
+          const newTask: TodoTask = await response.json();
+
+          set((state) => ({
+            tasks: [newTask, ...state.tasks],
+          }));
+        } catch (error) {
+          alert("Error adding task. Please try again.");
+          console.error("API Error (POST /tasks):", error);
+        }
+      },
 
       toggleTask: (id) =>
         set((state) => ({

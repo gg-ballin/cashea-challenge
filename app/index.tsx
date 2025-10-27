@@ -5,14 +5,14 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
 import HeaderView from '@/components/containers/header-view';
-import { PriorityFilterDropdown } from '@/components/lists/priority-filter-dropdown-button';
+import { PriorityFilterDropdown } from '@/components/lists/priority-filter-dropdown-button-list';
 import { ThemedList } from '@/components/lists/themed-list';
 import { HelloWave } from '@/components/ui/hello-wave';
 import { StatusFilterButtons } from '@/components/ui/status-filter-buttons';
 import { ThemedButton } from '@/components/ui/themed-button';
 import { ThemedFAB } from '@/components/ui/themed-fab';
 import { ThemedInput } from '@/components/ui/themed-textInput';
-import { Priority, TodoTask } from '@/constants/types';
+import { Priority } from '@/constants/types';
 import { getRandomPriority } from '@/helpers/helpers';
 import { useTodoStore } from '@/stores/todoStore';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -33,8 +33,7 @@ export default function HomeScreen() {
       return;
     }
 
-    const newTask: TodoTask = {
-      id: Date.now().toString(),
+    const newTask = {
       text: taskText.trim(),
       isCompleted: false,
       priority: getRandomPriority(),
