@@ -7,12 +7,6 @@
       "priority": "Low"
     },
     {
-      "id": "07bd",
-      "text": "asdasd",
-      "isCompleted": false,
-      "priority": "Medium"
-    },
-    {
       "id": "ae49",
       "text": "new entry",
       "isCompleted": false,
@@ -21,12 +15,6 @@
     {
       "id": "c07f",
       "text": "ASDASD",
-      "isCompleted": false,
-      "priority": "Low"
-    },
-    {
-      "id": "5d15",
-      "text": "ANDROID TASK",
       "isCompleted": false,
       "priority": "Low"
     },

@@ -26,11 +26,12 @@ export interface TodoState {
   priorityFilter: PriorityFilter;
   // Actions
   setHydrated: (hydrated: boolean) => void;
+  setTasks: (tasks: TodoTask[]) => void;
+  getTasks: () => Promise<void>;
   addTask: (task: Omit<TodoTask, "id">) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
   toggleTask: (id: string) => void;
-  deleteTask: (id: string) => void;
   editTask: (id: string, updates: Partial<Omit<TodoTask, "id">>) => void;
   setStatusFilter: (status: TaskStatusFilter) => void;
   setPriorityFilter: (priority: PriorityFilter) => void;
-  setSortBy: (by: SortBy, direction: SortDirection) => void;
 }

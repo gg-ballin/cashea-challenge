@@ -1,5 +1,10 @@
 import { TodoState } from "@/constants/types";
-import { postTask } from "@/services/api";
+import {
+  changeTaskStatus,
+  deleteTask,
+  getTasksApi,
+  postTask,
+} from "@/services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { PersistStorage, persist } from "zustand/middleware";
@@ -38,14 +43,25 @@ const customStorage: PersistStorage<TodoState> = {
 
 export const useTodoStore = create<TodoState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       tasks: [],
       isHydrated: false,
       statusFilter: "All", // 🚨 Default Filter
       priorityFilter: "All", // 🚨 Default Filter
       sortBy: "createdAt", // 🚨 Default Sort by date
-      sortDirection: "desc", // 🚨 Default Sort Desc
+      sortDirection: "asc", // 🚨 Default Sort Desc
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
+      setTasks: (tasks) => set({ tasks }),
+      getTasks: async () => {
+        try {
+          const fetchedTasks = await getTasksApi();
+          // Solo actualizamos el estado con la lista obtenida
+          set({ tasks: fetchedTasks });
+        } catch (error) {
+          console.error("Zustand Action Error (GET /tasks):", error);
+          // Opcional: Mostrar alerta si la conexión a la API falla
+        }
+      },
       addTask: async (task) => {
         try {
           const newTask = await postTask(task);
@@ -57,17 +73,48 @@ export const useTodoStore = create<TodoState>()(
           console.error("Zustand Action Error:", error);
         }
       },
-      toggleTask: (id) =>
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, isCompleted: !task.isCompleted } : task
-          ),
-        })),
+      toggleTask: async (id) => {
+        // 1. Obtener la tarea actual para determinar el nuevo estado
+        const taskToToggle = get().tasks.find((t) => t.id === id);
 
-      deleteTask: (id) =>
-        set((state) => ({
-          tasks: state.tasks.filter((task) => task.id !== id),
-        })),
+        if (!taskToToggle) return;
+
+        const newIsCompletedStatus = !taskToToggle.isCompleted;
+
+        try {
+          // 2. Llamada a la API (PATCH)
+          // We only send the ID and the new status
+          const confirmedTask = await changeTaskStatus(
+            id,
+            newIsCompletedStatus
+          );
+
+          // 3. Si la API tiene éxito, actualizar el estado local
+          set((state) => ({
+            tasks: state.tasks.map((task) =>
+              // Reemplazar la tarea con los datos confirmados por el servidor
+              task.id === id ? confirmedTask : task
+            ),
+          }));
+        } catch (error) {
+          // 4. Manejo de errores
+          alert(`Error toggling task ${id}. Please check your connection.`);
+          console.error("Zustand Action Error (PATCH /tasks):", error);
+        }
+      },
+      deleteTask: async (id) => {
+        try {
+          await deleteTask(id);
+          set((state) => ({
+            tasks: state.tasks.filter((task) => task.id !== id),
+          }));
+        } catch (error) {
+          alert(
+            `Error deleting task ${id}. Please check your connection and try again.`
+          );
+          console.error("Zustand Action Error (DELETE /tasks):", error);
+        }
+      },
 
       editTask: (id, updates) =>
         set((state) => ({
@@ -77,8 +124,6 @@ export const useTodoStore = create<TodoState>()(
         })),
       setStatusFilter: (status) => set({ statusFilter: status }),
       setPriorityFilter: (priority) => set({ priorityFilter: priority }),
-      setSortBy: (by, direction) =>
-        set({ sortBy: by, sortDirection: direction }),
     }),
     {
       name: "todo-storage",

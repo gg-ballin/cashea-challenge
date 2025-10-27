@@ -2,18 +2,15 @@
 
 import { TodoTask } from "@/constants/types";
 import { Platform } from "react-native";
-
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 const BASE_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/tasks"
     : "http://localhost:3000/tasks";
 
-// A generic function to handle CRUD operations
-// T is the expected return type (e.g., TodoTask or TodoTask[])
-// D is the data payload (e.g., Omit<TodoTask, 'id'>)
 export async function apiFetch<T, D = any>(
   endpoint: string,
-  method: "GET" | "POST" | "PUT" | "DELETE",
+  method: HttpMethod,
   data?: D
 ): Promise<T> {
   const config: RequestInit = {
@@ -27,25 +24,24 @@ export async function apiFetch<T, D = any>(
     config.body = JSON.stringify(data);
   }
 
-  // Note: We use the endpoint relative to the base URL
   const url = `${BASE_URL.replace(/\/tasks$/, "")}${endpoint}`;
 
   const response = await fetch(url, config);
 
-  // 1. Check for bad HTTP response (4xx or 5xx)
   if (!response.ok) {
-    // Log error details for debugging
     console.error(`API Error (${method} ${url}): Status ${response.status}`);
-
-    // Throw a generic error that the Zustand action can catch
     throw new Error(`Request failed with status: ${response.status}`);
   }
 
-  // 2. Return parsed JSON (assuming all your requests return JSON)
   return response.json() as Promise<T>;
 }
 
 type CreateTaskPayload = Omit<TodoTask, "id">;
+
+export async function getTasksApi(): Promise<TodoTask[]> {
+  const tasks = await apiFetch<TodoTask[]>("/tasks", "GET");
+  return tasks;
+}
 
 export async function postTask(taskData: CreateTaskPayload): Promise<TodoTask> {
   const newTask = await apiFetch<TodoTask, CreateTaskPayload>(
@@ -54,4 +50,21 @@ export async function postTask(taskData: CreateTaskPayload): Promise<TodoTask> {
     taskData
   );
   return newTask;
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  await apiFetch<void>(`/tasks/${id}`, "DELETE");
+}
+
+export async function changeTaskStatus(
+  id: string,
+  isCompleted: boolean
+): Promise<TodoTask> {
+  const payload = { isCompleted: isCompleted };
+  const updatedTask = await apiFetch<TodoTask, typeof payload>(
+    `/tasks/${id}`,
+    "PATCH",
+    payload
+  );
+  return updatedTask;
 }

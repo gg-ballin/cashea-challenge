@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
@@ -15,7 +16,6 @@ import { ThemedInput } from '@/components/ui/themed-textInput';
 import { Priority } from '@/constants/types';
 import { getRandomPriority } from '@/helpers/helpers';
 import { useTodoStore } from '@/stores/todoStore';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 export default function HomeScreen() {
@@ -26,7 +26,16 @@ export default function HomeScreen() {
   const priorityFilter = useTodoStore(state => state.priorityFilter);
   const addTask = useTodoStore(state => state.addTask);
   const isHydrated = useTodoStore(state => state.isHydrated);
+  const getTasks = useTodoStore(state => state.getTasks); // 🚨 FETCH getTasks action
 
+  // 🚨 useEffect para cargar las tareas
+  useEffect(() => {
+    // Si Zustand terminó de cargar los filtros y estados anteriores de AsyncStorage,
+    // es seguro cargar los datos frescos de la API.
+    if (isHydrated) {
+      getTasks();
+    }
+  }, [isHydrated, getTasks]);
   const handleAddTask = () => {
     if (!taskText.trim()) {
       alert("Task cannot be empty!");
