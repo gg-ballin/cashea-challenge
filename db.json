@@ -5,6 +5,36 @@
       "text": "new task in DB!",
       "isCompleted": false,
       "priority": "Low"
+    },
+    {
+      "id": "07bd",
+      "text": "asdasd",
+      "isCompleted": false,
+      "priority": "Medium"
+    },
+    {
+      "id": "ae49",
+      "text": "new entry",
+      "isCompleted": false,
+      "priority": "Medium"
+    },
+    {
+      "id": "c07f",
+      "text": "ASDASD",
+      "isCompleted": false,
+      "priority": "Low"
+    },
+    {
+      "id": "5d15",
+      "text": "ANDROID TASK",
+      "isCompleted": false,
+      "priority": "Low"
+    },
+    {
+      "id": "042d",
+      "text": "ios task!",
+      "isCompleted": false,
+      "priority": "Medium"
     }
   ]
 }
