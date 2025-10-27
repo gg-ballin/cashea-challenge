@@ -5,9 +5,9 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
 import HeaderView from '@/components/containers/header-view';
+import { PriorityFilterDropdown } from '@/components/lists/priority-filter-dropdown-button';
 import { ThemedList } from '@/components/lists/themed-list';
 import { HelloWave } from '@/components/ui/hello-wave';
-import { PriorityFilterButtons } from '@/components/ui/priority-filter-buttons';
 import { StatusFilterButtons } from '@/components/ui/status-filter-buttons';
 import { ThemedButton } from '@/components/ui/themed-button';
 import { ThemedFAB } from '@/components/ui/themed-fab';
@@ -89,8 +89,7 @@ export default function HomeScreen() {
           </ThemedView>
 
           <ThemedView style={styles.priorityFilters}>
-            <ThemedText type="default">Filter by Priority:</ThemedText>
-            <PriorityFilterButtons />
+            <PriorityFilterDropdown />
           </ThemedView>
 
         </ThemedView>
@@ -202,6 +201,7 @@ const styles = StyleSheet.create({
   priorityFilters: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 10,
   },
 });
