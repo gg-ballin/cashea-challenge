@@ -1,7 +1,8 @@
-import { TodoTask } from "@/constants/types";
+import { PriorityFilter, TaskStatusFilter, TodoTask } from "@/constants/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist, PersistStorage } from "zustand/middleware";
+import { PersistStorage, persist } from "zustand/middleware";
+
 type StorageValue<T> = { state: T };
 interface TodoState {
   tasks: TodoTask[];
@@ -10,7 +11,11 @@ interface TodoState {
   addTask: (task: TodoTask) => void;
   toggleTask: (id: string) => void;
   deleteTask: (id: string) => void;
+  statusFilter: TaskStatusFilter;
+  priorityFilter: PriorityFilter;
   editTask: (id: string, updates: Partial<Omit<TodoTask, "id">>) => void;
+  setStatusFilter: (status: TaskStatusFilter) => void;
+  setPriorityFilter: (priority: PriorityFilter) => void;
 }
 
 const customStorage: PersistStorage<TodoState> = {
@@ -48,7 +53,8 @@ export const useTodoStore = create<TodoState>()(
     (set) => ({
       tasks: [],
       isHydrated: false,
-
+      statusFilter: "All",
+      priorityFilter: "All",
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
 
       addTask: (task) =>
@@ -73,6 +79,8 @@ export const useTodoStore = create<TodoState>()(
             task.id === id ? { ...task, ...updates } : task
           ),
         })),
+      setStatusFilter: (status) => set({ statusFilter: status }),
+      setPriorityFilter: (priority) => set({ priorityFilter: priority }),
     }),
     {
       name: "todo-storage",

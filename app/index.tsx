@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/base/themed-text';
@@ -19,12 +19,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function HomeScreen() {
   const [taskText, setTaskText] = useState('');
 
-  const tasks = useTodoStore(state => state.tasks);
+  const allTasks = useTodoStore(state => state.tasks);
+  const statusFilter = useTodoStore(state => state.statusFilter);
+  const priorityFilter = useTodoStore(state => state.priorityFilter);
+  const setStatusFilter = useTodoStore(state => state.setStatusFilter); // Use this for filter buttons
+  const setPriorityFilter = useTodoStore(state => state.setPriorityFilter); // Use this for priority picker
   const addTask = useTodoStore(state => state.addTask);
-  const toggleTask = useTodoStore(state => state.toggleTask);
-  const deleteTask = useTodoStore(state => state.deleteTask);
   const isHydrated = useTodoStore(state => state.isHydrated);
-  const editTask = useTodoStore(state => state.editTask);
 
   const handleAddTask = () => {
     if (!taskText.trim()) {
@@ -43,6 +44,23 @@ export default function HomeScreen() {
     setTaskText('');
   };
 
+  const filteredTasks = useMemo(() => {
+    return allTasks.filter(task => {
+      // --- Filter by Status ---
+      const statusMatch =
+        statusFilter === 'All' ||
+        (statusFilter === 'Completed' && task.isCompleted) ||
+        (statusFilter === 'Pending' && !task.isCompleted);
+
+      // --- Filter by Priority ---
+      const priorityMatch =
+        priorityFilter === 'All' ||
+        task.priority === priorityFilter;
+
+      // 3. Filters should work together (AND logic)
+      return statusMatch && priorityMatch;
+    });
+  }, [allTasks, statusFilter, priorityFilter]);
   if (!isHydrated) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -50,6 +68,29 @@ export default function HomeScreen() {
         <ThemedText>Loading tasks...</ThemedText>
       </ThemedView>
     );
+  }
+  const filterButtons = () => {
+    return (
+      <>
+        <ThemedView style={styles.filterBar}>
+          <ThemedButton
+            title="All"
+            onPress={() => setStatusFilter('All')}
+            variant={statusFilter === 'All' ? 'tertiary' : 'filter'}
+          />
+          <ThemedButton
+            title="Completed"
+            onPress={() => setStatusFilter('Completed')}
+            variant={statusFilter === 'Completed' ? 'tertiary' : 'filter'}
+          />
+          <ThemedButton
+            title="Pending"
+            onPress={() => setStatusFilter('Pending')}
+            variant={statusFilter === 'Pending' ? 'tertiary' : 'filter'}
+          />
+        </ThemedView>
+      </>
+    )
   }
 
   return (
@@ -84,14 +125,11 @@ export default function HomeScreen() {
             <ThemedButton
               title="Add"
               onPress={handleAddTask}
-              variant="primary"
+              variant="tertiary"
             />
           </ThemedView>
-          <ThemedList
-            tasks={tasks}
-            onToggleTask={toggleTask}
-            onDeleteTask={deleteTask}
-          />
+          {filterButtons()}
+          <ThemedList tasks={filteredTasks} />
         </ThemedView>
       </ThemedView>
 
@@ -139,4 +177,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  filterBar: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    justifyContent: 'space-around',
+  }
 });

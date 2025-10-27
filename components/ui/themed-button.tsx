@@ -1,10 +1,9 @@
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Pressable, StyleProp, StyleSheet, Text, ViewStyle, type PressableProps } from 'react-native';
-// Assuming useThemeColor is available at this path
 
 export type ThemedButtonProps = PressableProps & {
   title: string;
-  variant?: 'primary' | 'delete' | 'filter' | 'priority'; // New styling variants
+  variant?: 'primary' | 'delete' | 'filter' | 'priority' | 'tertiary' | 'transparent';
   lightColor?: string;
   darkColor?: string;
   style?: StyleProp<ViewStyle>
@@ -19,21 +18,38 @@ export function ThemedButton({
   ...otherProps
 }: ThemedButtonProps) {
 
-  // Determine background color based on variant or custom color
-  const primaryBg = useThemeColor({ light: lightColor, dark: darkColor }, 'tint'); // Default to 'tint' (a primary color)
-  const deleteBg = useThemeColor({}, 'tint'); // Use 'error' for delete actions
-  const filterBg = useThemeColor({}, 'tabIconSelected'); // Use a lighter background for filters
+  // Background Colors
+  const primaryColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+  const deleteColor = useThemeColor({}, 'error');
+  const tertiaryColor = useThemeColor({}, 'tertiary');
+  const filterPriorityBg = useThemeColor({}, 'secondaryBackground');
+  const transparentBg = useThemeColor({}, 'transparent');
+
+  const darkTextColor = useThemeColor({}, 'text');
+  const lightTextColor = useThemeColor({}, 'background');
 
   const getBackgroundColor = () => {
-    if (variant === 'delete') return deleteBg;
-    if (variant === 'filter' || variant === 'priority') return filterBg;
-    return primaryBg;
+    switch (variant) {
+      case 'primary':
+        return primaryColor;
+      case 'delete':
+        return deleteColor;
+      case 'tertiary':
+        return tertiaryColor;
+      case 'filter':
+        return filterPriorityBg;
+      case 'priority':
+        return filterPriorityBg;
+      case 'transparent':
+        return transparentBg;
+      default:
+        return primaryColor;
+    }
   };
 
-  // Determine text color
-  const textColor = variant === 'filter' || variant === 'priority'
-    ? useThemeColor({}, 'text') // Dark text for light filter background
-    : useThemeColor({}, 'background'); // Light text for dark/primary backgrounds
+  const isLightBackground = variant === 'filter' || variant === 'priority' || variant === 'transparent' || variant === 'tertiary';
+
+  const textColor = isLightBackground ? darkTextColor : lightTextColor;
 
   return (
     <Pressable
@@ -41,7 +57,7 @@ export function ThemedButton({
         styles.base,
         {
           backgroundColor: getBackgroundColor(),
-          opacity: pressed ? 0.7 : 1, // Visual feedback on press 
+          opacity: pressed ? 0.7 : 1,
         },
         style,
       ]}
