@@ -91,7 +91,6 @@ export default function HomeScreen() {
             tasks={tasks}
             onToggleTask={toggleTask}
             onDeleteTask={deleteTask}
-            onEditTask={editTask}
           />
         </ThemedView>
       </ThemedView>

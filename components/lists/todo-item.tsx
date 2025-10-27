@@ -31,7 +31,6 @@ interface TodoItemProps {
   item: TodoTask;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
 }
 
 const getPriorityStyles = (priority: Priority): PriorityStyle => {
@@ -74,24 +73,13 @@ function SwipeRightAction({ dragX, onDelete, onEdit, itemId }: RightActionProps)
     )
   };
 
-  const handleEdit = () => {
-    // 🚨 IMPORTANT: You must call onEdit here.
-    // The current code calls handleDelete for both!
-    // Since tapping Edit should likely open the modal, we can use onEdit(itemId)
-    // or trigger the navigation logic here.
-    onEdit(itemId);
-    router.push(`/modal?id=${itemId}`);
-  };
-
-
   return (
     <ThemedView style={styles.actionContainer}>
 
       <Reanimated.View style={[styles.rightActionWrapper, editAnimatedStyle]}>
         <Pressable
-          // 🚨 Use handleEdit here!
           style={[styles.actionButton, { backgroundColor: editBackgroundColor }]}
-          onPress={handleEdit}
+          onPress={() => router.push(`/modal?id=${itemId}`)}
           android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
         >
           <Ionicons name="pencil-outline" size={24} color="white" />
@@ -116,7 +104,7 @@ function SwipeRightAction({ dragX, onDelete, onEdit, itemId }: RightActionProps)
   );
 }
 
-export function TodoItem({ item, onToggle, onDelete, onEdit }: TodoItemProps) {
+export function TodoItem({ item, onToggle, onDelete }: TodoItemProps) {
 
   const separatorColor = useThemeColor({}, 'secondaryBackground');
 
@@ -133,7 +121,7 @@ export function TodoItem({ item, onToggle, onDelete, onEdit }: TodoItemProps) {
           progress={progress}
           dragX={dragX}
           onDelete={onDelete}
-          onEdit={onEdit}
+          onEdit={() => router.push(`/modal?id=${item.id}`)}
           itemId={item.id}
         />
       )}
