@@ -70,7 +70,7 @@ export default function ModalScreen() {
     <TouchableWithoutFeedback style={styles.outerContainer} onPress={closeModal}>
       <ThemedView style={styles.outerContainer}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ThemedView style={[styles.modalContent, { height: Platform.OS === 'ios' ? height * 0.7 : height * 0.4, }]}>
+          <ThemedView style={[styles.modalContent, { height: Platform.OS === 'ios' ? height * 0.7 : undefined }]}>
 
             <ThemedText type="title" style={styles.title}>Edit Task</ThemedText>
             <View style={styles.divider} />
@@ -80,6 +80,7 @@ export default function ModalScreen() {
                 onChangeText={setEditText}
                 placeholder="Task description"
                 style={styles.input}
+                autoFocus
               />
               <ThemedButton
                 title="Edit"

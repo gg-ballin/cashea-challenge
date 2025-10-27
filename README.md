@@ -1,50 +1,42 @@
-# Welcome to your Expo app 👋
+# Welcome to Cashea's coding challenge 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
 
-1. Install dependencies
+1. Install dependencies:
 
    ```bash
-   npm install
+   yarn
    ```
 
-2. Start the app
+2. Start the app in ios:
 
    ```bash
-   npx expo start
+   yarn ios 
    ```
+3. Open Android Studio, select `Virtual Device Manager` and open an Android Emulator. Then type in terminal:
+   ```bash
+   yarn android
+   ```
+4. Start the `json-server` like so:
 
-In the output, you'll find options to open the app in a
+   ```bash
+   json-server --watch db.json --port 3000
+   ```
+## Base dependencies
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- [react-native](https://reactnative.dev/docs/getting-started) hybrid mobile framework.
+- [expo](https://docs.expo.dev/) React Native framework.
+- [expo-router](https://docs.expo.dev/router/introduction/) navigation library.
+- [typescript](https://www.typescriptlang.org/) for type-checking.
+- [json-server](https://www.npmjs.com/package/json-server) for mocking a REST API.
+- [react-native-reanimated v4](https://github.com/software-mansion/react-native-reanimated) for animations.
+- [zustand](https://zustand.docs.pmnd.rs/getting-started/introduction) for state management.
+- [async-storage](https://docs.expo.dev/versions/latest/sdk/async-storage/) for storing data asynchronously.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- [biome](https://biomejs.dev/guides/getting-started/) for linting.
 
-## Get a fresh project
+## Why Zustand > Context API
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Zustand handles better re-renderization, the biggest performance issue React Native apps usually have. Also, not having `useCallback`'s everywhere, makes the code easier to read and maintain. Cleaner Async logic without the need of a `dispatch`. Also, using Zustand you can significantly reduce the need for custom React Hooks, which aren't that reliable. The simple advantage of Zustand middleware over the Context API is that it allows you to easily add complex, non-React logic like persistence (such as `AsyncStorage`) or logging outside the component tree.
