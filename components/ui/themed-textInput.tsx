@@ -13,7 +13,7 @@ export function ThemedInput({ style, lightColor, darkColor, ...otherProps }: The
 
   const borderColor = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
   const textColor = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-  const placeholderColor = useThemeColor({}, 'icon');
+  const placeholderColor = useThemeColor({}, 'text');
 
   return (
     <TextInput

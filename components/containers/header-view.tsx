@@ -1,6 +1,4 @@
-// components/header-view.tsx (Archivo Renombrado)
-
-import { ThemedView } from '@/components/themed-view';
+import { ThemedView } from '@/components/base/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
