@@ -24,7 +24,6 @@ export interface TodoState {
   tasks: TodoTask[];
   isHydrated: boolean;
   loadingTaskId: string | null;
-  isEditingTask: boolean;
   isAddingTask: boolean;
   statusFilter: TaskStatusFilter;
   priorityFilter: PriorityFilter;

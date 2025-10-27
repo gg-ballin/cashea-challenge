@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Dimensions, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, Platform, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
@@ -22,9 +22,10 @@ export default function ModalScreen() {
   const editTask = useTodoStore(state => state.editTask);
   const tasks = useTodoStore(state => state.tasks);
   const task = tasks.find(t => t.id === taskId);
-  const isEditingTask = useTodoStore(state => state.isEditingTask);
   const [editText, setEditText] = useState(task?.text || '');
   const [editPriority, setEditPriority] = useState<Priority>(task?.priority || 'Medium');
+  const loadingTaskId = useTodoStore(state => state.loadingTaskId);
+  const isLoading = loadingTaskId === taskId
 
   const separatorColor = useThemeColor({}, 'secondaryBackground');
 
@@ -69,7 +70,7 @@ export default function ModalScreen() {
     <TouchableWithoutFeedback style={styles.outerContainer} onPress={closeModal}>
       <ThemedView style={styles.outerContainer}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ThemedView style={styles.modalContent}>
+          <ThemedView style={[styles.modalContent, { height: Platform.OS === 'ios' ? height * 0.7 : height * 0.4, }]}>
 
             <ThemedText type="title" style={styles.title}>Edit Task</ThemedText>
             <View style={styles.divider} />
@@ -83,8 +84,8 @@ export default function ModalScreen() {
               <ThemedButton
                 title="Edit"
                 onPress={handleEdit}
-                disabled={isEditingTask || !editText.trim()}
-                loading={isEditingTask || !editText.trim()}
+                disabled={isLoading || !editText.trim()}
+                loading={isLoading || !editText.trim()}
                 variant="tertiary"
               />
             </ThemedView>
@@ -95,7 +96,7 @@ export default function ModalScreen() {
                 <ThemedButton
                   title={priority}
                   key={priority}
-                  loading={isEditingTask && editPriority === priority}
+                  loading={isLoading && editPriority === priority}
                   variant={editPriority === priority ? 'tertiary' : 'filter'}
                   onPress={() => handleChangePriority(priority)}
                   style={editPriority === priority && styles.button}
@@ -117,7 +118,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    height: height * 0.4,
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

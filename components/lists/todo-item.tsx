@@ -20,7 +20,6 @@ interface RightActionProps {
   progress: SharedValue<number>;
   dragX: SharedValue<number>;
   itemId: string;
-  isLoading: boolean;
 }
 
 
@@ -28,11 +27,13 @@ interface TodoItemProps {
   item: TodoTask;
 }
 
-function SwipeRightAction({ dragX, itemId, isLoading }: RightActionProps) {
+function SwipeRightAction({ dragX, itemId }: RightActionProps) {
   const ACTION_WIDTH = 80;
   const deleteBackgroundColor = useThemeColor({}, 'error');
   const editBackgroundColor = useThemeColor({}, 'edit');
   const deleteTask = useTodoStore(state => state.deleteTask);
+  const loadingTaskId = useTodoStore(state => state.loadingTaskId);
+  const isLoading = loadingTaskId === itemId;
 
   const editAnimatedStyle = useAnimatedStyle(() => {
     const startOffset = ACTION_WIDTH * 2;
@@ -63,9 +64,14 @@ function SwipeRightAction({ dragX, itemId, isLoading }: RightActionProps) {
         <Pressable
           style={[styles.actionButton, { backgroundColor: editBackgroundColor }]}
           onPress={() => router.push(`/modal?id=${itemId}`)}
+          disabled={isLoading}
           android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
         >
-          <Ionicons name="pencil-outline" size={24} color="white" />
+          {isLoading ?
+            <ActivityIndicator size="small" color="white" /> :
+            <Ionicons name="pencil-outline" size={24} color="white" />
+          }
+
           <ThemedText style={styles.deleteText} type="default">Edit</ThemedText>
         </Pressable>
       </Reanimated.View>
@@ -104,7 +110,6 @@ export function TodoItem({ item }: TodoItemProps) {
           progress={progress}
           dragX={dragX}
           itemId={item.id}
-          isLoading={isLoading}
         />
       )}
       rightThreshold={80}

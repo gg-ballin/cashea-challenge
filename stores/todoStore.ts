@@ -51,7 +51,6 @@ export const useTodoStore = create<TodoState>()(
       priorityFilter: "All", // 🚨 Default Filter
       loadingTaskId: null,
       isAddingTask: false,
-      isEditingTask: false,
       isRefreshing: false,
       // Actions
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
@@ -110,9 +109,9 @@ export const useTodoStore = create<TodoState>()(
         }
       },
       deleteTask: async (id) => {
+        set({ loadingTaskId: id });
         try {
           await deleteTask(id);
-          set({ loadingTaskId: id });
           set((state) => ({
             tasks: state.tasks.filter((task) => task.id !== id),
           }));
@@ -127,7 +126,6 @@ export const useTodoStore = create<TodoState>()(
       },
       editTask: async (id, updates) => {
         set({ loadingTaskId: id });
-        set({ isEditingTask: true });
         const payload = {
           text: updates.text,
           isCompleted: updates.isCompleted,
@@ -145,7 +143,6 @@ export const useTodoStore = create<TodoState>()(
           alert(`Error saving changes for task ${id}.`);
           console.error("Zustand Action Error (PATCH /tasks):", error);
         } finally {
-          set({ isEditingTask: false });
           set({ loadingTaskId: null });
         }
       },

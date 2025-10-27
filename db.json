@@ -1,11 +1,3 @@
 {
-  "tasks": [
-    {
-      "id": "f119",
-      "text": "new task",
-      "isCompleted": false,
-      "priority": "High",
-      "platform": "ios"
-    }
-  ]
+  "tasks": []
 }
