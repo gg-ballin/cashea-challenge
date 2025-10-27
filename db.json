@@ -1,15 +1,9 @@
 {
   "tasks": [
     {
-      "id": "4aaa",
-      "text": "new task in DB!",
-      "isCompleted": true,
-      "priority": "Low"
-    },
-    {
       "id": "ae49",
       "text": "new entry",
-      "isCompleted": false,
+      "isCompleted": true,
       "priority": "Medium"
     },
     {

@@ -26,10 +26,11 @@ export interface TodoState {
   isAddingTask: boolean;
   statusFilter: TaskStatusFilter;
   priorityFilter: PriorityFilter;
+  isRefreshing: boolean;
   // Actions
   setHydrated: (hydrated: boolean) => void;
   setTasks: (tasks: TodoTask[]) => void;
-  getTasks: () => Promise<void>;
+  getTasks: (isRefreshing?: boolean) => Promise<void>;
   addTask: (task: Omit<TodoTask, "id">) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   toggleTask: (id: string) => void;

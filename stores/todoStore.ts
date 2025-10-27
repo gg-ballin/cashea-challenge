@@ -52,15 +52,23 @@ export const useTodoStore = create<TodoState>()(
       sortDirection: "asc", // 🚨 Default Sort Desc
       loadingTaskId: null,
       isAddingTask: false,
+      isRefreshing: false,
       // Actions
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
       setTasks: (tasks) => set({ tasks }),
-      getTasks: async () => {
+      getTasks: async (isRefreshing = false) => {
         try {
+          if (isRefreshing) {
+            set({ isRefreshing: true });
+          }
           const fetchedTasks = await getTasksApi();
           set({ tasks: fetchedTasks });
         } catch (error) {
           console.error("Zustand Action Error (GET /tasks):", error);
+        } finally {
+          if (isRefreshing) {
+            set({ isRefreshing: false });
+          }
         }
       },
       addTask: async (task) => {
@@ -111,7 +119,7 @@ export const useTodoStore = create<TodoState>()(
           );
           console.error("Zustand Action Error (DELETE /tasks):", error);
         } finally {
-          set({ loadingTaskId: null }); // 🚨 2. FINALIZAR CARGA
+          set({ loadingTaskId: null });
         }
       },
 

@@ -1,26 +1,24 @@
-// components/ui/priority-badge.tsx (Nuevo Componente)
-
-import { PRIORITY_STYLES } from '@/components/lists/todo-item';
-import { Priority, PriorityFilter } from '@/constants/types';
 import React from 'react';
+
+
+import { PRIORITY_STYLES } from '@/constants/priority';
+import { Priority, PriorityFilter } from '@/constants/types';
 import { StyleSheet } from 'react-native';
 import { ThemedText } from '../base/themed-text';
 import { ThemedView } from '../base/themed-view';
 
-interface PriorityBadgeProps {
+interface BadgeProps {
   priority: Priority | PriorityFilter;
   size?: 'small' | 'large';
 }
 
-// Helper para obtener los estilos del badge (lo que era getPriorityStyles)
 const getBadgeStyles = (priority: Priority | PriorityFilter) => {
   return PRIORITY_STYLES[priority] || PRIORITY_STYLES.Default;
 };
 
-export function PriorityBadge({ priority, size = 'small' }: PriorityBadgeProps) {
+export function PriorityBadge({ priority, size = 'small' }: BadgeProps) {
   const priorityStyles = getBadgeStyles(priority);
 
-  // Determinar el tamaño de la fuente y el relleno basado en la prop 'size'
   const fontSize = size === 'large' ? 14 : 12;
   const padding = size === 'large' ? { paddingHorizontal: 10, paddingVertical: 5 } : { paddingHorizontal: 8, paddingVertical: 4 };
 
@@ -51,6 +49,5 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    // Otros estilos base
   },
 });

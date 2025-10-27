@@ -1,7 +1,7 @@
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
 import { ThemedCheckbox } from '@/components/ui/themed-checkbox';
-import { Priority, PriorityFilter, PriorityStyle, TodoTask } from '@/constants/types';
+import { TodoTask } from '@/constants/types';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useTodoStore } from '@/stores/todoStore';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,14 +22,8 @@ interface RightActionProps {
   itemId: string;
   isLoading: boolean;
 }
-type Priorities = Priority | PriorityFilter | 'Default'
-export const PRIORITY_STYLES: Record<Priorities, PriorityStyle> = {
-  'High': { backgroundColor: '#F97070', color: 'white' },
-  'Medium': { backgroundColor: '#FFD700', color: 'black' },
-  'Low': { backgroundColor: '#48BB78', color: 'white' },
-  'Default': { backgroundColor: '#CCCCCC', color: 'black' },
-  'All': { backgroundColor: '#FDFA3D', color: 'black' },
-};
+
+
 interface TodoItemProps {
   item: TodoTask;
 }
