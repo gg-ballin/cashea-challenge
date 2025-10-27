@@ -1,6 +1,6 @@
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleProp, StyleSheet, View, ViewStyle, type PressableProps } from 'react-native';
+import { ActivityIndicator, Pressable, StyleProp, StyleSheet, View, ViewStyle, type PressableProps } from 'react-native';
 
 export type ThemedCheckboxProps = PressableProps & {
   checked: boolean;
@@ -8,6 +8,7 @@ export type ThemedCheckboxProps = PressableProps & {
   lightColor?: string;
   darkColor?: string;
   style?: StyleProp<ViewStyle>;
+  isLoading?: boolean;
 };
 
 export function ThemedCheckbox({
@@ -16,13 +17,14 @@ export function ThemedCheckbox({
   style,
   lightColor,
   darkColor,
+  isLoading = false,
   ...otherProps
 }: ThemedCheckboxProps) {
 
   const borderColor = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-  const checkedColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+  const checkedColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tertiary');
   const uncheckedBgColor = useThemeColor({}, 'background');
-
+  const tintColor = useThemeColor({}, 'text');
   const iconColor = checked ? checkedColor : uncheckedBgColor;
 
   return (
@@ -31,6 +33,7 @@ export function ThemedCheckbox({
       onPress={onToggle}
       accessibilityRole="checkbox"
       accessibilityState={{ checked }}
+      disabled={isLoading}
       {...otherProps}
     >
       <View
@@ -42,11 +45,13 @@ export function ThemedCheckbox({
           }
         ]}
       >
-        {checked && (
+        {isLoading ? (
+          <ActivityIndicator size="small" color={tintColor} />
+        ) : checked && (
           <Ionicons
             name={'checkmark'}
             size={20}
-            color={'white'}
+            color={'black'}
           />
         )}
       </View>

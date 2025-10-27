@@ -27,16 +27,14 @@ export default function HomeScreen() {
   const isAddingTask = useTodoStore(state => state.isAddingTask);
   const addTask = useTodoStore(state => state.addTask);
   const isHydrated = useTodoStore(state => state.isHydrated);
-  const getTasks = useTodoStore(state => state.getTasks); // 🚨 FETCH getTasks action
+  const getTasks = useTodoStore(state => state.getTasks);
 
-  // 🚨 useEffect para cargar las tareas
   useEffect(() => {
-    // Si Zustand terminó de cargar los filtros y estados anteriores de AsyncStorage,
-    // es seguro cargar los datos frescos de la API.
     if (isHydrated) {
       getTasks();
     }
   }, [isHydrated, getTasks]);
+
   const handleAddTask = () => {
     if (!taskText.trim()) {
       alert("Task cannot be empty!");
@@ -60,14 +58,11 @@ export default function HomeScreen() {
         statusFilter === 'All' ||
         (statusFilter === 'Completed' && task.isCompleted) ||
         (statusFilter === 'Pending' && !task.isCompleted);
-
       const priorityMatch =
         priorityFilter === 'All' ||
         task.priority === priorityFilter;
       return statusMatch && priorityMatch;
     });
-
-    // --- Ordering Logic (Highest Priority/Pending first) ---
     const priorityOrder: Record<Priority, number> = { 'High': 3, 'Medium': 2, 'Low': 1 };
 
     tasks.sort((a, b) => {
@@ -89,22 +84,6 @@ export default function HomeScreen() {
         <ThemedText>Loading tasks...</ThemedText>
       </ThemedView>
     );
-  }
-  const filterButtons = () => {
-    return (
-      <>
-        <ThemedView style={styles.fullFilterContainer}>
-          <ThemedView style={styles.statusFilters}>
-            <StatusFilterButtons />
-          </ThemedView>
-
-          <ThemedView style={styles.priorityFilters}>
-            <PriorityFilterDropdown />
-          </ThemedView>
-
-        </ThemedView>
-      </>
-    )
   }
 
   return (
@@ -145,8 +124,17 @@ export default function HomeScreen() {
               variant="tertiary"
             />
           </ThemedView>
-          {filterButtons()}
-          <ThemedList tasks={filteredAndSortedTasks} />
+          <ThemedView style={styles.fullFilterContainer}>
+            <ThemedView style={styles.statusFilters}>
+              <StatusFilterButtons />
+            </ThemedView>
+            <ThemedView style={styles.priorityFilters}>
+              <PriorityFilterDropdown />
+            </ThemedView>
+          </ThemedView>
+          {
+            <ThemedList tasks={filteredAndSortedTasks} />
+          }
         </ThemedView>
       </ThemedView>
       <ThemedFAB />

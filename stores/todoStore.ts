@@ -3,6 +3,7 @@ import {
   changeTaskStatus,
   deleteTask,
   getTasksApi,
+  patchTaskEdit,
   postTask,
 } from "@/services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -48,13 +49,14 @@ export const useTodoStore = create<TodoState>()(
       isHydrated: false,
       statusFilter: "All", // 🚨 Default Filter
       priorityFilter: "All", // 🚨 Default Filter
-      sortBy: "createdAt", // 🚨 Default Sort by date
-      sortDirection: "asc", // 🚨 Default Sort Desc
       loadingTaskId: null,
       isAddingTask: false,
+      isEditingTask: false,
       isRefreshing: false,
       // Actions
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
+      setStatusFilter: (status) => set({ statusFilter: status }),
+      setPriorityFilter: (priority) => set({ priorityFilter: priority }),
       setTasks: (tasks) => set({ tasks }),
       getTasks: async (isRefreshing = false) => {
         try {
@@ -89,7 +91,7 @@ export const useTodoStore = create<TodoState>()(
         const taskToToggle = get().tasks.find((t) => t.id === id);
         if (!taskToToggle) return;
         const newIsCompletedStatus = !taskToToggle.isCompleted;
-
+        set({ loadingTaskId: id });
         try {
           const confirmedTask = await changeTaskStatus(
             id,
@@ -104,6 +106,7 @@ export const useTodoStore = create<TodoState>()(
           alert(`Error toggling task ${id}. Please check your connection.`);
           console.error("Zustand Action Error (PATCH /tasks):", error);
         } finally {
+          set({ loadingTaskId: null });
         }
       },
       deleteTask: async (id) => {
@@ -122,15 +125,30 @@ export const useTodoStore = create<TodoState>()(
           set({ loadingTaskId: null });
         }
       },
+      editTask: async (id, updates) => {
+        set({ loadingTaskId: id });
+        set({ isEditingTask: true });
+        const payload = {
+          text: updates.text,
+          isCompleted: updates.isCompleted,
+          priority: updates.priority,
+        };
 
-      editTask: (id, updates) =>
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, ...updates } : task
-          ),
-        })),
-      setStatusFilter: (status) => set({ statusFilter: status }),
-      setPriorityFilter: (priority) => set({ priorityFilter: priority }),
+        try {
+          const confirmedTask = await patchTaskEdit(id, payload);
+          set((state) => ({
+            tasks: state.tasks.map((task) =>
+              task.id === id ? confirmedTask : task
+            ),
+          }));
+        } catch (error) {
+          alert(`Error saving changes for task ${id}.`);
+          console.error("Zustand Action Error (PATCH /tasks):", error);
+        } finally {
+          set({ isEditingTask: false });
+          set({ loadingTaskId: null });
+        }
+      },
     }),
     {
       name: "todo-storage",

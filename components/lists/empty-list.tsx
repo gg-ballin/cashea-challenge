@@ -3,9 +3,7 @@ import { StyleSheet } from "react-native";
 import { ThemedText } from "../base/themed-text";
 import { ThemedView } from "../base/themed-view";
 
-// 🚨 1. Nuevo componente para el mensaje de lista vacía
 export const EmptyListMessage = () => {
-  // Usamos el color de fondo para que el mensaje se adapte al tema
   const background = useThemeColor({}, 'background');
 
   return (

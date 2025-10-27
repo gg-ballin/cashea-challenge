@@ -1,4 +1,4 @@
-import { TodoTask } from "@/constants/types";
+import { EditableTaskFields, TodoTask } from "@/constants/types";
 import { Platform } from "react-native";
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 const BASE_URL =
@@ -65,6 +65,18 @@ export async function changeTaskStatus(
     `/tasks/${id}`,
     "PATCH",
     payload
+  );
+  return updatedTask;
+}
+
+export async function patchTaskEdit(
+  id: string,
+  updates: Partial<EditableTaskFields>
+): Promise<TodoTask> {
+  const updatedTask = await apiFetch<TodoTask, typeof updates>(
+    `/tasks/${id}`,
+    "PATCH",
+    updates
   );
   return updatedTask;
 }

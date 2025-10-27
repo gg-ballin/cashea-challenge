@@ -1,8 +1,11 @@
 export type Priority = "High" | "Medium" | "Low";
 export type TaskStatusFilter = "All" | "Completed" | "Pending";
 export type PriorityFilter = "All" | Priority;
-export type SortDirection = "asc" | "desc";
-export type SortBy = "priority" | "text" | "createdAt";
+export type EditableTaskFields = Pick<
+  TodoTask,
+  "text" | "isCompleted" | "priority"
+>;
+
 export type Platform = "ios" | "android";
 export interface TodoTask {
   id: string;
@@ -20,9 +23,8 @@ export type PriorityStyle = {
 export interface TodoState {
   tasks: TodoTask[];
   isHydrated: boolean;
-  sortBy: SortBy;
-  sortDirection: SortDirection;
   loadingTaskId: string | null;
+  isEditingTask: boolean;
   isAddingTask: boolean;
   statusFilter: TaskStatusFilter;
   priorityFilter: PriorityFilter;

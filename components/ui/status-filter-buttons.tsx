@@ -15,10 +15,8 @@ interface TaskCountBadgeProps {
 }
 
 function TaskCountBadge({ count }: TaskCountBadgeProps) {
-  const errorColor = useThemeColor({}, 'error'); // Red color
-
+  const errorColor = useThemeColor({}, 'error');
   if (count === 0) return null;
-
   return (
     <ThemedView style={[styles.badgeContainer, { backgroundColor: errorColor }]}>
       <ThemedText style={[styles.badgeText, { color: 'white' }]} type="default">

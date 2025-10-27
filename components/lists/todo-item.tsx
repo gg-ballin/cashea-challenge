@@ -69,20 +69,20 @@ function SwipeRightAction({ dragX, itemId, isLoading }: RightActionProps) {
           <ThemedText style={styles.deleteText} type="default">Edit</ThemedText>
         </Pressable>
       </Reanimated.View>
-
       <Reanimated.View style={[styles.rightActionWrapper, deleteAnimatedStyle]}>
         <Pressable
           style={[styles.actionButton, { backgroundColor: deleteBackgroundColor }]}
           onPress={handleDelete}
+          disabled={isLoading}
           android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
         >
-          <Ionicons name="trash-bin-outline" size={24} color="white" />
+          {isLoading ?
+            <ActivityIndicator size="small" color="white" /> :
+            <Ionicons name="trash-bin-outline" size={24} color="white" />
+          }
           <ThemedText style={styles.deleteText} type="default">Delete</ThemedText>
         </Pressable>
       </Reanimated.View>
-
-
-
     </ThemedView>
   );
 }
@@ -92,6 +92,7 @@ export function TodoItem({ item }: TodoItemProps) {
   const toggleTask = useTodoStore(state => state.toggleTask);
   const isLoading = loadingTaskId === item.id;
   const separatorColor = useThemeColor({}, 'secondaryBackground');
+  const loadingColor = useThemeColor({}, 'text');
   const textDecoration = item.isCompleted ? 'line-through' : 'none';
   const textOpacity = item.isCompleted ? 0.6 : 1;
   const completedStyle = item.isCompleted ? styles.completedItem : {};
@@ -116,11 +117,12 @@ export function TodoItem({ item }: TodoItemProps) {
         <ThemedView style={styles.content}>
           {isLoading ? (
             <ThemedView style={styles.loadingSpinner}>
-              <ActivityIndicator size="small" color={useThemeColor({}, 'tertiary')} />
+              <ActivityIndicator size="small" color={loadingColor} />
             </ThemedView>
           ) : (
             <ThemedCheckbox
               checked={item.isCompleted}
+              isLoading={isLoading}
               onToggle={(e) => {
                 if (e.stopPropagation) e.stopPropagation();
                 toggleTask(item.id);
@@ -209,8 +211,6 @@ const styles = StyleSheet.create({
   loadingSpinner: {
     width: 24,
     height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 15,
+    marginRight: 10,
   },
 });

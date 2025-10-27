@@ -1,62 +1,10 @@
 {
   "tasks": [
     {
-      "id": "ae49",
-      "text": "new entry",
-      "isCompleted": true,
-      "priority": "Medium"
-    },
-    {
-      "id": "c07f",
-      "text": "ASDASD",
-      "isCompleted": true,
-      "priority": "Low"
-    },
-    {
-      "id": "042d",
-      "text": "ios task!",
-      "isCompleted": false,
-      "priority": "Medium"
-    },
-    {
-      "id": "e77e",
+      "id": "f119",
       "text": "new task",
-      "isCompleted": true,
-      "priority": "High"
-    },
-    {
-      "id": "df17",
-      "text": "task for platform",
-      "isCompleted": false,
-      "priority": "Medium",
-      "platform": "ios"
-    },
-    {
-      "id": "ee59",
-      "text": "TASK FOR ANDROID?",
-      "isCompleted": true,
-      "priority": "Low",
-      "platform": "android"
-    },
-    {
-      "id": "7002",
-      "text": "sadf",
       "isCompleted": false,
       "priority": "High",
-      "platform": "android"
-    },
-    {
-      "id": "5b02",
-      "text": "NEW TASK",
-      "isCompleted": true,
-      "priority": "Low",
-      "platform": "android"
-    },
-    {
-      "id": "fd28",
-      "text": "new one",
-      "isCompleted": true,
-      "priority": "Low",
       "platform": "ios"
     }
   ]
