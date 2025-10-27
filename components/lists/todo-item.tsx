@@ -3,10 +3,11 @@ import { ThemedView } from '@/components/base/themed-view';
 import { ThemedCheckbox } from '@/components/ui/themed-checkbox';
 import { Priority, PriorityFilter, PriorityStyle, TodoTask } from '@/constants/types';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useTodoStore } from '@/stores/todoStore';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { Alert, Pressable, StyleSheet } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
   SharedValue,
@@ -18,9 +19,8 @@ import { PriorityBadge } from '../ui/priority-badge';
 interface RightActionProps {
   progress: SharedValue<number>;
   dragX: SharedValue<number>;
-  onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
   itemId: string;
+  isLoading: boolean;
 }
 type Priorities = Priority | PriorityFilter | 'Default'
 export const PRIORITY_STYLES: Record<Priorities, PriorityStyle> = {
@@ -32,18 +32,13 @@ export const PRIORITY_STYLES: Record<Priorities, PriorityStyle> = {
 };
 interface TodoItemProps {
   item: TodoTask;
-  onToggle: (id: string) => void;
-  onDelete: (id: string) => void;
 }
 
-const getPriorityStyles = (priority: Priority): PriorityStyle => {
-  return PRIORITY_STYLES[priority] || PRIORITY_STYLES.Default;
-};
-
-function SwipeRightAction({ dragX, onDelete, onEdit, itemId }: RightActionProps) {
+function SwipeRightAction({ dragX, itemId, isLoading }: RightActionProps) {
   const ACTION_WIDTH = 80;
   const deleteBackgroundColor = useThemeColor({}, 'error');
   const editBackgroundColor = useThemeColor({}, 'edit');
+  const deleteTask = useTodoStore(state => state.deleteTask);
 
   const editAnimatedStyle = useAnimatedStyle(() => {
     const startOffset = ACTION_WIDTH * 2;
@@ -63,14 +58,13 @@ function SwipeRightAction({ dragX, onDelete, onEdit, itemId }: RightActionProps)
     Alert.alert('Delete Task', 'Are you sure you want to delete this task?',
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Delete", style: "destructive", onPress: () => onDelete(itemId) }
+        { text: "Delete", style: "destructive", onPress: () => deleteTask(itemId) }
       ]
     )
   };
 
   return (
     <ThemedView style={styles.actionContainer}>
-
       <Reanimated.View style={[styles.rightActionWrapper, editAnimatedStyle]}>
         <Pressable
           style={[styles.actionButton, { backgroundColor: editBackgroundColor }]}
@@ -99,13 +93,13 @@ function SwipeRightAction({ dragX, onDelete, onEdit, itemId }: RightActionProps)
   );
 }
 
-export function TodoItem({ item, onToggle, onDelete }: TodoItemProps) {
-
+export function TodoItem({ item }: TodoItemProps) {
+  const loadingTaskId = useTodoStore(state => state.loadingTaskId);
+  const toggleTask = useTodoStore(state => state.toggleTask);
+  const isLoading = loadingTaskId === item.id;
   const separatorColor = useThemeColor({}, 'secondaryBackground');
   const textDecoration = item.isCompleted ? 'line-through' : 'none';
   const textOpacity = item.isCompleted ? 0.6 : 1;
-  const priorityStyles = getPriorityStyles(item.priority);
-
   const completedStyle = item.isCompleted ? styles.completedItem : {};
 
   return (
@@ -114,25 +108,31 @@ export function TodoItem({ item, onToggle, onDelete }: TodoItemProps) {
         <SwipeRightAction
           progress={progress}
           dragX={dragX}
-          onDelete={onDelete}
-          onEdit={() => router.push(`/modal?id=${item.id}`)}
           itemId={item.id}
+          isLoading={isLoading}
         />
       )}
       rightThreshold={80}
+      simultaneousHandlers={isLoading ? [] : undefined}
     >
       <ThemedView style={[styles.contentWrapper, completedStyle, {
         borderBottomColor: separatorColor,
         borderBottomWidth: StyleSheet.hairlineWidth
       }]}>
         <ThemedView style={styles.content}>
-          <ThemedCheckbox
-            checked={item.isCompleted}
-            onToggle={(e) => {
-              if (e.stopPropagation) e.stopPropagation();
-              onToggle(item.id);
-            }}
-          />
+          {isLoading ? (
+            <ThemedView style={styles.loadingSpinner}>
+              <ActivityIndicator size="small" color={useThemeColor({}, 'tertiary')} />
+            </ThemedView>
+          ) : (
+            <ThemedCheckbox
+              checked={item.isCompleted}
+              onToggle={(e) => {
+                if (e.stopPropagation) e.stopPropagation();
+                toggleTask(item.id);
+              }}
+            />
+          )}
           <ThemedView style={styles.textAndPriorityContainer}>
             <ThemedText
               style={{ textDecorationLine: textDecoration, opacity: textOpacity, flexShrink: 1 }}
@@ -211,5 +211,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 80,
     height: '100%',
+  },
+  loadingSpinner: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
   },
 });

@@ -1,8 +1,8 @@
 import { TodoTask } from '@/constants/types';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useTodoStore } from '@/stores/todoStore';
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { EmptyListMessage } from './empty-list';
 import { TodoItem } from './todo-item';
 
 
@@ -14,18 +14,13 @@ export function ThemedList({ tasks }: ThemedListProps) {
 
   const separatorColor = useThemeColor({}, 'secondaryBackground');
   const listBackgroundColor = useThemeColor({}, 'background');
-  const toggleTask = useTodoStore(state => state.toggleTask);
-  const deleteTask = useTodoStore(state => state.deleteTask);
   const Separator = () => (
     <View style={[styles.separator, { backgroundColor: separatorColor }]} />
   );
 
   const renderItem = ({ item }: { item: TodoTask }) => (
     <TodoItem
-      item={item}
-      onToggle={toggleTask}
-      onDelete={deleteTask}
-    />
+      item={item} />
   );
 
   return (
@@ -37,6 +32,7 @@ export function ThemedList({ tasks }: ThemedListProps) {
         styles.listContainer,
         { backgroundColor: listBackgroundColor }
       ]}
+      ListEmptyComponent={<EmptyListMessage />}
       ItemSeparatorComponent={Separator}
       style={{ flex: 1 }}
     />

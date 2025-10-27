@@ -5,7 +5,7 @@ export type SortDirection = "asc" | "desc";
 export type SortBy = "priority" | "text" | "createdAt";
 export type Platform = "ios" | "android";
 export interface TodoTask {
-  id?: string;
+  id: string;
   text: string;
   isCompleted: boolean;
   priority: Priority;

@@ -9,13 +9,13 @@
     {
       "id": "ae49",
       "text": "new entry",
-      "isCompleted": true,
+      "isCompleted": false,
       "priority": "Medium"
     },
     {
       "id": "c07f",
       "text": "ASDASD",
-      "isCompleted": false,
+      "isCompleted": true,
       "priority": "Low"
     },
     {
@@ -27,7 +27,7 @@
     {
       "id": "e77e",
       "text": "new task",
-      "isCompleted": false,
+      "isCompleted": true,
       "priority": "High"
     },
     {
@@ -40,7 +40,7 @@
     {
       "id": "ee59",
       "text": "TASK FOR ANDROID?",
-      "isCompleted": false,
+      "isCompleted": true,
       "priority": "Low",
       "platform": "android"
     },
@@ -54,9 +54,16 @@
     {
       "id": "5b02",
       "text": "NEW TASK",
-      "isCompleted": false,
+      "isCompleted": true,
       "priority": "Low",
       "platform": "android"
+    },
+    {
+      "id": "fd28",
+      "text": "new one",
+      "isCompleted": true,
+      "priority": "Low",
+      "platform": "ios"
     }
   ]
 }

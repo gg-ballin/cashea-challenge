@@ -79,35 +79,29 @@ export const useTodoStore = create<TodoState>()(
       },
       toggleTask: async (id) => {
         const taskToToggle = get().tasks.find((t) => t.id === id);
-
         if (!taskToToggle) return;
-
         const newIsCompletedStatus = !taskToToggle.isCompleted;
 
         try {
-          // 2. Llamada a la API (PATCH)
-          // We only send the ID and the new status
           const confirmedTask = await changeTaskStatus(
             id,
             newIsCompletedStatus
           );
-
-          // 3. Si la API tiene éxito, actualizar el estado local
           set((state) => ({
             tasks: state.tasks.map((task) =>
-              // Reemplazar la tarea con los datos confirmados por el servidor
               task.id === id ? confirmedTask : task
             ),
           }));
         } catch (error) {
-          // 4. Manejo de errores
           alert(`Error toggling task ${id}. Please check your connection.`);
           console.error("Zustand Action Error (PATCH /tasks):", error);
+        } finally {
         }
       },
       deleteTask: async (id) => {
         try {
           await deleteTask(id);
+          set({ loadingTaskId: id });
           set((state) => ({
             tasks: state.tasks.filter((task) => task.id !== id),
           }));
@@ -116,6 +110,8 @@ export const useTodoStore = create<TodoState>()(
             `Error deleting task ${id}. Please check your connection and try again.`
           );
           console.error("Zustand Action Error (DELETE /tasks):", error);
+        } finally {
+          set({ loadingTaskId: null }); // 🚨 2. FINALIZAR CARGA
         }
       },
 
