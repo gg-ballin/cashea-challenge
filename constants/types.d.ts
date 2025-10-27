@@ -22,6 +22,8 @@ export interface TodoState {
   isHydrated: boolean;
   sortBy: SortBy;
   sortDirection: SortDirection;
+  loadingTaskId: string | null;
+  isAddingTask: boolean;
   statusFilter: TaskStatusFilter;
   priorityFilter: PriorityFilter;
   // Actions

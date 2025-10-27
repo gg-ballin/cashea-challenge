@@ -50,19 +50,21 @@ export const useTodoStore = create<TodoState>()(
       priorityFilter: "All", // 🚨 Default Filter
       sortBy: "createdAt", // 🚨 Default Sort by date
       sortDirection: "asc", // 🚨 Default Sort Desc
+      loadingTaskId: null,
+      isAddingTask: false,
+      // Actions
       setHydrated: (hydrated) => set({ isHydrated: hydrated }),
       setTasks: (tasks) => set({ tasks }),
       getTasks: async () => {
         try {
           const fetchedTasks = await getTasksApi();
-          // Solo actualizamos el estado con la lista obtenida
           set({ tasks: fetchedTasks });
         } catch (error) {
           console.error("Zustand Action Error (GET /tasks):", error);
-          // Opcional: Mostrar alerta si la conexión a la API falla
         }
       },
       addTask: async (task) => {
+        set({ isAddingTask: true });
         try {
           const newTask = await postTask(task);
           set((state) => ({
@@ -71,10 +73,11 @@ export const useTodoStore = create<TodoState>()(
         } catch (error) {
           alert("Error adding task. Please try again.");
           console.error("Zustand Action Error:", error);
+        } finally {
+          set({ isAddingTask: false });
         }
       },
       toggleTask: async (id) => {
-        // 1. Obtener la tarea actual para determinar el nuevo estado
         const taskToToggle = get().tasks.find((t) => t.id === id);
 
         if (!taskToToggle) return;

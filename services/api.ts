@@ -1,5 +1,3 @@
-// services/api.ts
-
 import { TodoTask } from "@/constants/types";
 import { Platform } from "react-native";
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -7,6 +5,8 @@ const BASE_URL =
   Platform.OS === "android"
     ? "http://10.0.2.2:3000/tasks"
     : "http://localhost:3000/tasks";
+
+const NETWORK_LATENCY_MS = 1500;
 
 export async function apiFetch<T, D = any>(
   endpoint: string,
@@ -25,7 +25,7 @@ export async function apiFetch<T, D = any>(
   }
 
   const url = `${BASE_URL.replace(/\/tasks$/, "")}${endpoint}`;
-
+  await new Promise((resolve) => setTimeout(resolve, NETWORK_LATENCY_MS));
   const response = await fetch(url, config);
 
   if (!response.ok) {

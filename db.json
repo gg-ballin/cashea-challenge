@@ -3,13 +3,13 @@
     {
       "id": "4aaa",
       "text": "new task in DB!",
-      "isCompleted": false,
+      "isCompleted": true,
       "priority": "Low"
     },
     {
       "id": "ae49",
       "text": "new entry",
-      "isCompleted": false,
+      "isCompleted": true,
       "priority": "Medium"
     },
     {
@@ -40,6 +40,20 @@
     {
       "id": "ee59",
       "text": "TASK FOR ANDROID?",
+      "isCompleted": false,
+      "priority": "Low",
+      "platform": "android"
+    },
+    {
+      "id": "7002",
+      "text": "sadf",
+      "isCompleted": false,
+      "priority": "High",
+      "platform": "android"
+    },
+    {
+      "id": "5b02",
+      "text": "NEW TASK",
       "isCompleted": false,
       "priority": "Low",
       "platform": "android"

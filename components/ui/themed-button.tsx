@@ -1,12 +1,13 @@
 import { Colors } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { Pressable, StyleProp, StyleSheet, Text, ViewStyle, type PressableProps } from 'react-native';
+import { ActivityIndicator, Pressable, StyleProp, StyleSheet, Text, ViewStyle, type PressableProps } from 'react-native';
 
 export type ThemedButtonProps = PressableProps & {
   title: string;
   variant?: 'primary' | 'delete' | 'filter' | 'priority' | 'tertiary' | 'transparent';
   lightColor?: string;
   darkColor?: string;
+  loading?: boolean;
   style?: StyleProp<ViewStyle>
 };
 
@@ -15,6 +16,7 @@ export function ThemedButton({
   variant = 'primary',
   style,
   lightColor,
+  loading,
   darkColor,
   ...otherProps
 }: ThemedButtonProps) {
@@ -26,7 +28,6 @@ export function ThemedButton({
   const transparentBg = useThemeColor({}, 'transparent');
   const trueBlackColor = Colors.light.text;
   const currentThemeTextColor = useThemeColor({}, 'text');
-  const darkTextColor = useThemeColor({}, 'text');
   const lightTextColor = useThemeColor({}, 'background');
 
   const getBackgroundColor = () => {
@@ -61,7 +62,6 @@ export function ThemedButton({
   } else {
     textColor = lightTextColor;
   }
-
   return (
     <Pressable
       style={({ pressed }) => [
@@ -75,9 +75,12 @@ export function ThemedButton({
       ]}
       {...otherProps}
     >
-      <Text style={[styles.text, { color: textColor }]}>
+      {loading ? (
+        <ActivityIndicator size="small" color={textColor} />
+      ) : <Text style={[styles.text, { color: textColor }]}>
         {title}
-      </Text>
+      </Text>}
+
     </Pressable>
   );
 }

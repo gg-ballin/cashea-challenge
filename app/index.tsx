@@ -24,6 +24,7 @@ export default function HomeScreen() {
   const allTasks = useTodoStore(state => state.tasks);
   const statusFilter = useTodoStore(state => state.statusFilter);
   const priorityFilter = useTodoStore(state => state.priorityFilter);
+  const isAddingTask = useTodoStore(state => state.isAddingTask);
   const addTask = useTodoStore(state => state.addTask);
   const isHydrated = useTodoStore(state => state.isHydrated);
   const getTasks = useTodoStore(state => state.getTasks); // 🚨 FETCH getTasks action
@@ -134,10 +135,13 @@ export default function HomeScreen() {
               value={taskText}
               onChangeText={setTaskText}
               style={styles.inputField}
+              editable={!isAddingTask}
             />
             <ThemedButton
               title="Add"
               onPress={handleAddTask}
+              disabled={isAddingTask}
+              loading={isAddingTask}
               variant="tertiary"
             />
           </ThemedView>
