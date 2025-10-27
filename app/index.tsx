@@ -24,8 +24,6 @@ export default function HomeScreen() {
   const allTasks = useTodoStore(state => state.tasks);
   const statusFilter = useTodoStore(state => state.statusFilter);
   const priorityFilter = useTodoStore(state => state.priorityFilter);
-  const setStatusFilter = useTodoStore(state => state.setStatusFilter);
-  const setPriorityFilter = useTodoStore(state => state.setPriorityFilter);
   const addTask = useTodoStore(state => state.addTask);
   const isHydrated = useTodoStore(state => state.isHydrated);
 
@@ -48,18 +46,14 @@ export default function HomeScreen() {
 
   const filteredAndSortedTasks = useMemo(() => {
     let tasks = allTasks.filter(task => {
-      // Filter by Status
       const statusMatch =
         statusFilter === 'All' ||
         (statusFilter === 'Completed' && task.isCompleted) ||
         (statusFilter === 'Pending' && !task.isCompleted);
 
-      // Filter by Priority
       const priorityMatch =
         priorityFilter === 'All' ||
         task.priority === priorityFilter;
-
-      // Filters should work together (AND logic)
       return statusMatch && priorityMatch;
     });
 
@@ -67,18 +61,16 @@ export default function HomeScreen() {
     const priorityOrder: Record<Priority, number> = { 'High': 3, 'Medium': 2, 'Low': 1 };
 
     tasks.sort((a, b) => {
-      // Incomplete tasks always come before completed tasks
       if (a.isCompleted !== b.isCompleted) {
         return a.isCompleted ? 1 : -1;
       }
-      // Sort by priority level (Descending)
       const priorityA = priorityOrder[a.priority] || 0;
       const priorityB = priorityOrder[b.priority] || 0;
       return priorityB - priorityA;
     });
 
     return tasks;
-  }, [allTasks, statusFilter, priorityFilter /*, sort state */]);
+  }, [allTasks, statusFilter, priorityFilter]);
 
   if (!isHydrated) {
     return (
@@ -200,7 +192,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 5,
     gap: 10,
-    // Optional: Add a themed borderBottom if desired
   },
   statusFilters: {
     flexDirection: 'row',
