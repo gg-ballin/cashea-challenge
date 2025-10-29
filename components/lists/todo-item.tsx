@@ -63,7 +63,7 @@ function SwipeRightAction({ dragX, itemId }: RightActionProps) {
       <Reanimated.View style={[styles.rightActionWrapper, editAnimatedStyle]}>
         <Pressable
           style={[styles.actionButton, { backgroundColor: editBackgroundColor }]}
-          onPress={() => router.push(`/modal?id=${itemId}`)}
+          onPress={() => router.push(`/edit?id=${itemId}`)}
           disabled={isLoading}
           android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
         >

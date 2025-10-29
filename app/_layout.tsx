@@ -13,10 +13,14 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ 
-          presentation: 'transparentModal', 
-          animation: 'fade_from_bottom', 
-          title: 'Modal', 
+        <Stack.Screen name="edit" options={{
+          presentation: 'transparentModal',
+          animation: 'fade_from_bottom',
+          headerShown: false
+        }} />
+        <Stack.Screen name="add" options={{
+          presentation: 'transparentModal',
+          animation: 'fade_from_bottom',
           headerShown: false
         }} />
       </Stack>

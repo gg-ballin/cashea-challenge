@@ -14,7 +14,7 @@ import { useTodoStore } from '@/stores/todoStore';
 const { height } = Dimensions.get('window');
 const PRIORITY_OPTIONS: Priority[] = ['High', 'Medium', 'Low'];
 
-export default function ModalScreen() {
+export default function EditTodoModal() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const taskId = params.id as string;

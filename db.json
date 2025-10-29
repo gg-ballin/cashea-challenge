@@ -1,3 +1,18 @@
 {
-  "tasks": []
+  "tasks": [
+    {
+      "id": "a2ea",
+      "text": "new task IOS",
+      "isCompleted": false,
+      "priority": "High",
+      "platform": "ios"
+    },
+    {
+      "id": "09df",
+      "text": "new task android!",
+      "isCompleted": false,
+      "priority": "Low",
+      "platform": "android"
+    }
+  ]
 }

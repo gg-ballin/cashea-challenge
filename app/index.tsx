@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import { useEffect, useMemo } from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { ThemedText } from '@/components/base/themed-text';
@@ -8,49 +8,26 @@ import { ThemedView } from '@/components/base/themed-view';
 import HeaderView from '@/components/containers/header-view';
 import { PriorityFilterDropdown } from '@/components/lists/priority-filter-dropdown-button-list';
 import { ThemedList } from '@/components/lists/themed-list';
-import { HelloWave } from '@/components/ui/hello-wave';
 import { StatusFilterButtons } from '@/components/ui/status-filter-buttons';
-import { ThemedButton } from '@/components/ui/themed-button';
+import { ThemedActionButton } from '@/components/ui/themed-action-btn';
 import { ThemedFAB } from '@/components/ui/themed-fab';
-import { ThemedInput } from '@/components/ui/themed-textInput';
 import { Priority } from '@/constants/types';
-import { getRandomPriority } from '@/helpers/helpers';
 import { useTodoStore } from '@/stores/todoStore';
+import { router } from 'expo-router';
 
 
 export default function HomeScreen() {
-  const [taskText, setTaskText] = useState('');
-
   const allTasks = useTodoStore(state => state.tasks);
   const statusFilter = useTodoStore(state => state.statusFilter);
   const priorityFilter = useTodoStore(state => state.priorityFilter);
-  const isAddingTask = useTodoStore(state => state.isAddingTask);
-  const addTask = useTodoStore(state => state.addTask);
   const isHydrated = useTodoStore(state => state.isHydrated);
   const getTasks = useTodoStore(state => state.getTasks);
-
+  const isAddingTask = useTodoStore(state => state.isAddingTask);
   useEffect(() => {
     if (isHydrated) {
       getTasks();
     }
   }, [isHydrated, getTasks]);
-
-  const handleAddTask = () => {
-    if (!taskText.trim()) {
-      alert("Task cannot be empty!");
-      return;
-    }
-
-    const newTask = {
-      text: taskText.trim(),
-      isCompleted: false,
-      priority: getRandomPriority(),
-      platform: Platform.OS as 'ios' | 'android',
-    };
-
-    addTask(newTask);
-    setTaskText('');
-  };
 
   const filteredAndSortedTasks = useMemo(() => {
     let tasks = allTasks.filter(task => {
@@ -86,10 +63,10 @@ export default function HomeScreen() {
     );
   }
 
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemedView style={styles.container}>
-
         <HeaderView
           headerBackgroundColor={{ light: '#FDFA3D', dark: '#3C3C3C' }}
           headerImage={
@@ -100,44 +77,25 @@ export default function HomeScreen() {
           }
         />
 
-        <ThemedView style={styles.titleContainer}>
-          <HelloWave />
-          <ThemedView style={{ flexDirection: 'column', alignItems: 'center' }}>
-            <ThemedText type="middle">Welcome to Cashea's </ThemedText>
-            <ThemedText type="middle">coding challenge! </ThemedText>
-          </ThemedView>
-        </ThemedView>
         <ThemedView style={styles.stepContainer}>
-          <ThemedView style={styles.inputContainer}>
-            <ThemedInput
-              placeholder="Add tasks here"
-              value={taskText}
-              onChangeText={setTaskText}
-              style={styles.inputField}
-              editable={!isAddingTask}
-            />
-            <ThemedButton
-              title="Add"
-              onPress={handleAddTask}
-              disabled={isAddingTask}
-              loading={isAddingTask}
-              variant="tertiary"
-            />
-          </ThemedView>
           <ThemedView style={styles.fullFilterContainer}>
             <ThemedView style={styles.statusFilters}>
               <StatusFilterButtons />
             </ThemedView>
+            {isAddingTask && (
+              <ThemedView style={styles.loadingContainer}>
+                <ActivityIndicator size="small" />
+              </ThemedView>
+            )}
             <ThemedView style={styles.priorityFilters}>
               <PriorityFilterDropdown />
             </ThemedView>
           </ThemedView>
-          {
-            <ThemedList tasks={filteredAndSortedTasks} />
-          }
+          <ThemedList tasks={filteredAndSortedTasks} />
         </ThemedView>
       </ThemedView>
       <ThemedFAB />
+      <ThemedActionButton onPress={() => router.push('/add')} />
     </GestureHandlerRootView>
   );
 }
@@ -145,14 +103,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    justifyContent: 'center',
-    paddingTop: 10,
-    paddingBottom: 4,
   },
   stepContainer: {
     flex: 1,
@@ -177,7 +127,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loadingContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

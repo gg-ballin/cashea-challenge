@@ -7,13 +7,13 @@ export type EditableTaskFields = Pick<
 >;
 
 export type Platform = "ios" | "android";
-export interface TodoTask {
+export type TodoTask<T = string> = {
   id: string;
   text: string;
   isCompleted: boolean;
   priority: Priority;
   platform: Platform;
-}
+};
 
 export type PriorityStyle = {
   backgroundColor: string;
